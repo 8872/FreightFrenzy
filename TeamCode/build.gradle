@@ -15,6 +15,7 @@ dependencies {
         exclude group: 'androidx.annotation', module: 'annotation'
         exclude group: 'org.firstinspires.ftc'
     }
+    implementation 'com.spartronics4915.lib:ftc265:2.1.9'
     /*
      * Other Modules
      */
@@ -22,4 +23,5 @@ dependencies {
 }
 repositories {
     maven { url = 'https://maven.brott.dev/' } // for FTC Dashboard
+    maven { url = "https://maven.0x778.tk" } // for Intel T265 camera
 }
