@@ -11,8 +11,15 @@
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 dependencies {
+    implementation('com.acmerobotics.dashboard:dashboard:0.4.3') {
+        exclude group: 'androidx.annotation', module: 'annotation'
+        exclude group: 'org.firstinspires.ftc'
+    }
     /*
      * Other Modules
      */
     implementation project(':FtcRobotController')
+}
+repositories {
+    maven { url = 'https://maven.brott.dev/' } // for FTC Dashboard
 }
