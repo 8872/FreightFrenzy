@@ -1,3 +1,9 @@
+tasks.whenTaskAdded { task ->
+    if (task.name.toLowerCase().contains("lint") || task.name.toLowerCase().contains("test")) {
+        task.enabled = false
+    }
+}
+
 android {
 
     flavorDimensions 'type'
