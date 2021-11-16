@@ -15,6 +15,10 @@ dependencies {
         exclude group: 'androidx.annotation', module: 'annotation'
         exclude group: 'org.firstinspires.ftc'
     }
+
+    implementation 'com.acmerobotics.roadrunner:core:0.5.4'
+    implementation 'org.apache.commons:commons-math3:3.6.1'
+
     /*
      * Other Modules
      */
