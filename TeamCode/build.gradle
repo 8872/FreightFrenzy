@@ -15,6 +15,7 @@ dependencies {
         exclude group: 'androidx.annotation', module: 'annotation'
         exclude group: 'org.firstinspires.ftc'
     }
+    implementation 'com.acmerobotics.roadrunner:core:0.5.3'
     implementation 'com.spartronics4915.lib:ftc265:2.1.9'
     /*
      * Other Modules

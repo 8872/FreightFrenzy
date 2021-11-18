@@ -24,13 +24,11 @@ public class LocalizationTest extends LinearOpMode {
         waitForStart();
 
         while (!isStopRequested()) {
-            drive.setWeightedDrivePower(
-                    new Pose2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x,
-                            -gamepad1.right_stick_x
-                    )
-            );
+            double horizontal = gamepad1.left_stick_x;
+            double vertical = -gamepad1.left_stick_y;
+            double angle = -gamepad1.right_stick_x;
+            drive.setWeightedDrivePower(vertical, horizontal, angle); // in roadrunner x and y are reversed
+
 
             drive.update();
 

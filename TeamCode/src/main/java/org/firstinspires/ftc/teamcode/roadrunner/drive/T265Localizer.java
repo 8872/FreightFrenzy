@@ -14,32 +14,44 @@ public class T265Localizer implements Localizer {
 
     // We treat this like a singleton because there should only ever be one object per camera
     private static T265Camera slamra = null;
+    public static final boolean ENABLE_T265 = false;
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
 
     public T265Localizer(HardwareMap hardwareMap) {
-        if (slamra == null) {
+        if (slamra == null && ENABLE_T265) {
             slamra = new T265Camera(new Transform2d(), 0.1, hardwareMap.appContext);
+            slamra.start();
         }
-        slamra.start();
+
     }
 
     @NotNull
     @Override
     public Pose2d getPoseEstimate() {
-        return new Pose2d(internalPose().getX(), internalPose().getY(), internalPose().getHeading());
+        if (ENABLE_T265) {
+            return new Pose2d(internalPose().getX(), internalPose().getY(), internalPose().getHeading());
+        } else {
+            return new Pose2d();
+        }
     }
 
     @Override
     public void setPoseEstimate(@NotNull Pose2d pose2d) {
-        slamra.setPose(new com.arcrobotics.ftclib.geometry.Pose2d(pose2d.getX(), pose2d.getY(), new Rotation2d(pose2d.getHeading())));
+        if (ENABLE_T265) {
+            slamra.setPose(new com.arcrobotics.ftclib.geometry.Pose2d(pose2d.getX(), pose2d.getY(), new Rotation2d(pose2d.getHeading())));
+        }
     }
 
     @Nullable
     @Override
     public Pose2d getPoseVelocity() {
-        return new Pose2d(slamra.getLastReceivedCameraUpdate().velocity.vxMetersPerSecond, slamra.getLastReceivedCameraUpdate().velocity.vyMetersPerSecond);
+        if (ENABLE_T265) {
+            return new Pose2d(slamra.getLastReceivedCameraUpdate().velocity.vxMetersPerSecond, slamra.getLastReceivedCameraUpdate().velocity.vyMetersPerSecond);
+        } else {
+            return new Pose2d();
+        }
     }
 
     @Override
@@ -48,7 +60,11 @@ public class T265Localizer implements Localizer {
     }
 
     private static com.arcrobotics.ftclib.geometry.Pose2d internalPose() {
-        return slamra.getLastReceivedCameraUpdate().pose;
+        if (ENABLE_T265) {
+            return slamra.getLastReceivedCameraUpdate().pose;
+        } else {
+            return new com.arcrobotics.ftclib.geometry.Pose2d();
+        }
     }
 
 }
