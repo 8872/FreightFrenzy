@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.roadrunner.drive.opmode;
+package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -9,13 +9,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
 /*
  * This is a simple routine to test translational drive capabilities.
  */
 
 @Autonomous(group = "drive")
-public class StraightTest extends LinearOpMode {
+public class SquareTest extends LinearOpMode {
     public static double DISTANCE = 60; // in
 
     @Override
@@ -36,34 +37,25 @@ public class StraightTest extends LinearOpMode {
                 .build();
 
         Trajectory trajectory2 = drive.trajectoryBuilder(new Pose2d())
+                .strafeLeft(DISTANCE)
+                .build();
+
+        Trajectory trajectory3 = drive.trajectoryBuilder(new Pose2d())
                 .forward(-DISTANCE)
                 .build();
 
-
+        Trajectory trajectory4 = drive.trajectoryBuilder(new Pose2d())
+                .strafeRight(DISTANCE)
+                .build();
 
         waitForStart();
 
         if (isStopRequested()) return;
 
-        drive.followTrajectoryAsync(trajectory1);
-        while (!Thread.currentThread().isInterrupted() && drive.isBusy()) {
-            drive.update();
-            telemetry.addData("leftFront", leftFront.getPower());
-            telemetry.addData("leftRear", leftRear.getPower());
-            telemetry.addData("rightFront", rightFront.getPower());
-            telemetry.addData("rightRear", rightRear.getPower());
-            telemetry.update();
-        }
-        drive.followTrajectoryAsync(trajectory2);
-        while (!Thread.currentThread().isInterrupted() && drive.isBusy()) {
-            drive.update();
-            telemetry.addData("leftFront", leftFront.getPower());
-            telemetry.addData("leftRear", leftRear.getPower());
-            telemetry.addData("rightFront", rightFront.getPower());
-            telemetry.addData("rightRear", rightRear.getPower());
-            telemetry.update();
-        }
-
+        drive.followTrajectory(trajectory1);
+        drive.followTrajectory(trajectory2);
+        drive.followTrajectory(trajectory3);
+        drive.followTrajectory(trajectory4);
 
         Pose2d poseEstimate = drive.getPoseEstimate();
         telemetry.addData("finalX", poseEstimate.getX());

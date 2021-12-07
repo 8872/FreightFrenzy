@@ -18,24 +18,27 @@ public class LocalizationTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
+        DcMotor carousel = hardwareMap.dcMotor.get("carousel");
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        telemetry.addData("carousel", carousel::getPower);
 
         waitForStart();
 
         while (!isStopRequested()) {
-            double horizontal = gamepad1.left_stick_x;
+            double horizontal = -gamepad1.left_stick_x;
             double vertical = -gamepad1.left_stick_y;
             double angle = -gamepad1.right_stick_x;
             drive.setWeightedDrivePower(vertical, horizontal, angle); // in roadrunner x and y are reversed
 
+            carousel.setPower(gamepad1.right_stick_y);
 
             drive.update();
 
             Pose2d poseEstimate = drive.getPoseEstimate();
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
-            telemetry.addData("heading", poseEstimate.getHeading());
+            telemetry.addData("heading degrees", Math.toDegrees(poseEstimate.getHeading()));
+            telemetry.addData("heading radians", poseEstimate.getHeading());
             telemetry.update();
         }
     }

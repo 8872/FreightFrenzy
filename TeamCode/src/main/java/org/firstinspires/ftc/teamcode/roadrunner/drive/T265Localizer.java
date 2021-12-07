@@ -14,7 +14,7 @@ public class T265Localizer implements Localizer {
 
     // We treat this like a singleton because there should only ever be one object per camera
     private static T265Camera slamra = null;
-    public static final boolean ENABLE_T265 = false;
+    public static final boolean ENABLE_T265 = true;
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
@@ -31,7 +31,7 @@ public class T265Localizer implements Localizer {
     @Override
     public Pose2d getPoseEstimate() {
         if (ENABLE_T265) {
-            return new Pose2d(internalPose().getX(), internalPose().getY(), internalPose().getHeading());
+            return new Pose2d(toInches(internalPose().getX()), toInches(internalPose().getY()), internalPose().getHeading());
         } else {
             return new Pose2d();
         }
@@ -40,7 +40,7 @@ public class T265Localizer implements Localizer {
     @Override
     public void setPoseEstimate(@NotNull Pose2d pose2d) {
         if (ENABLE_T265) {
-            slamra.setPose(new com.arcrobotics.ftclib.geometry.Pose2d(pose2d.getX(), pose2d.getY(), new Rotation2d(pose2d.getHeading())));
+            slamra.setPose(new com.arcrobotics.ftclib.geometry.Pose2d(toMeters(pose2d.getX()), toMeters(pose2d.getY()), new Rotation2d((pose2d.getHeading()))));
         }
     }
 
@@ -48,7 +48,7 @@ public class T265Localizer implements Localizer {
     @Override
     public Pose2d getPoseVelocity() {
         if (ENABLE_T265) {
-            return new Pose2d(slamra.getLastReceivedCameraUpdate().velocity.vxMetersPerSecond, slamra.getLastReceivedCameraUpdate().velocity.vyMetersPerSecond);
+            return new Pose2d(slamra.getLastReceivedCameraUpdate().velocity.vxMetersPerSecond / 0.0254, slamra.getLastReceivedCameraUpdate().velocity.vyMetersPerSecond / 0.0254);
         } else {
             return new Pose2d();
         }
@@ -65,6 +65,14 @@ public class T265Localizer implements Localizer {
         } else {
             return new com.arcrobotics.ftclib.geometry.Pose2d();
         }
+    }
+
+    public static double toInches(double meters) {
+        return meters / 0.0254;
+    }
+
+    public static double toMeters(double inches) {
+        return inches * 0.0254;
     }
 
 }
