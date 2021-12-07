@@ -19,6 +19,8 @@ dependencies {
     implementation 'com.acmerobotics.roadrunner:core:0.5.4'
     implementation 'org.apache.commons:commons-math3:3.6.1'
 
+    implementation 'com.spartronics4915.lib:ftc265:2.1.9'
+
     /*
      * Other Modules
      */
@@ -26,4 +28,5 @@ dependencies {
 }
 repositories {
     maven { url = 'https://maven.brott.dev/' } // for FTC Dashboard
+    maven { url = "https://maven.0x778.tk" } // for Intel T265 camera
 }
