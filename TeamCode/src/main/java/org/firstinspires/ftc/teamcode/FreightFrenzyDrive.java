@@ -6,18 +6,27 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
 public class FreightFrenzyDrive extends BaseOpMode {
 
+    public static double intakePower = 0.5;
+
     private DcMotor carousel, intake, launcherArm, pulley;
     private TouchSensor railLimit;
 
     private boolean slowMode = false;
     private boolean lastBumperState;
-    public static double intakePower = 0.5;
+    private double acceleratePower = 0;
 
     @Override
     public void loop() {
-        mechanumDrive(slowMode);
+        if (gamepad1.right_stick_button) {
+            acceleratePower = 0;
+        }
+        if (!drive.isBusy() && (gamepad1.x || acceleratePower != 0)) {
+            acceleratePower = accelerate(acceleratePower);
+        } else if (!drive.isBusy()) {
+            mechanumDrive(slowMode, false, false);
+        }
 
-        if (gamepad1.a) {
+        if (gamepad1.y) {
             carousel.setPower(-0.5);
         } else {
             carousel.setPower(0);
