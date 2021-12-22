@@ -1,18 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.TouchSensor;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-public class FreightFrenzyDrive extends BaseOpMode {
-
-    public static double intakePower = 0.5;
-
-    private DcMotor carousel, intake, launcherArm, pulley;
-    private TouchSensor railLimit;
+@TeleOp
+public class FreightFrenzyDrive extends FreightFrenzyOpMode {
 
     private boolean slowMode = false;
-    private boolean lastBumperState;
+    private boolean lastAState, lastBumperState;
     private double acceleratePower = 0;
 
     @Override
@@ -21,10 +15,15 @@ public class FreightFrenzyDrive extends BaseOpMode {
             acceleratePower = 0;
         }
         if (!drive.isBusy() && (gamepad1.x || acceleratePower != 0)) {
-            acceleratePower = accelerate(acceleratePower);
+            acceleratePower = accelerate(gamepad1.x, acceleratePower);
         } else if (!drive.isBusy()) {
             mechanumDrive(slowMode, false, false);
         }
+
+        if (gamepad1.a && !lastAState) {
+            slowMode = !slowMode;
+        }
+        lastAState = gamepad1.a;
 
         if (gamepad1.y) {
             carousel.setPower(-0.5);
@@ -68,8 +67,7 @@ public class FreightFrenzyDrive extends BaseOpMode {
     @Override
     protected void composeTelemetry() {
         super.composeTelemetry();
-        telemetry.addData("carousel", carousel::getPower);
-        telemetry.addData("intake", intake::getPower);
-        telemetry.addData("launcherArm", launcherArm::getPower);
+        telemetry.addData("Accelerating", () -> acceleratePower != 0);
+        telemetry.addData("Slow Mode", () -> slowMode);
     }
 }

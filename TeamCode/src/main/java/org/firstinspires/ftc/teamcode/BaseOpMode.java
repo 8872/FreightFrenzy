@@ -43,7 +43,7 @@ public abstract class BaseOpMode extends OpMode {
 
         initHardware();
 
-        brake(); // drive motors are already initialized by SampleMecanumDrive
+        brake(); // drive motors are already configured by SampleMecanumDrive
 
         initHardwareDevices();
 
@@ -99,15 +99,15 @@ public abstract class BaseOpMode extends OpMode {
             angle = angle / 2;
         }
 
-        drive.setWeightedDrivePower(vertical, horizontal, angle); // in roadrunner x and y are reversed
+        drive.setWeightedDrivePower(vertical, horizontal, angle); // in roadrunner x is vertical and y is horizontal
         drive.update();
     }
 
-    protected double accelerate(double acceleratePower) {
-        if (gamepad1.x && acceleratePower < 0.5) {
+    protected double accelerate(boolean gamepadButton, double acceleratePower) {
+        if (gamepadButton && acceleratePower < 0.5) {
             acceleratePower += 0.001;
             drive.setMotorPowers(acceleratePower, acceleratePower, acceleratePower, acceleratePower);
-        } else if (!gamepad1.x && acceleratePower > 0) {
+        } else if (!gamepadButton && acceleratePower > 0) {
             acceleratePower -= 0.001;
             if (acceleratePower <= 0) {
                 acceleratePower = 0;
@@ -127,12 +127,13 @@ public abstract class BaseOpMode extends OpMode {
         return round(value, 4);
     }
 
+    /**
+     * Rounds value to the specified number of decimal places.
+     */
     private static double round(double value, @SuppressWarnings("SameParameterValue") int places) {
         if (places < 0) throw new IllegalArgumentException();
 
-        BigDecimal bd = new BigDecimal(Double.toString(value));
-        bd = bd.setScale(places, RoundingMode.HALF_UP);
-        return bd.doubleValue();
+        return new BigDecimal(Double.toString(value)).setScale(places, RoundingMode.HALF_UP).doubleValue();
     }
 
     @SuppressWarnings("SameParameterValue")
