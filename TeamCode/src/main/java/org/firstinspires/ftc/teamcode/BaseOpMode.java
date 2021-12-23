@@ -169,8 +169,7 @@ public abstract class BaseOpMode extends OpMode {
     }
 
     /**
-     * This method takes any field of type that extends HardwareDevice and assigns it to a
-     * hardware device of matching name from hardwareMap.get
+     * This method takes all fields in this class and subclasses of type
      */
     @SuppressWarnings("rawtypes")
     private void initHardware() {

@@ -16,11 +16,9 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 @TeleOp(group = "drive")
 public class LocalizationTest extends LinearOpMode {
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        DcMotor carousel = hardwareMap.dcMotor.get("carousel");
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        telemetry.addData("carousel", carousel::getPower);
 
         waitForStart();
 
@@ -29,8 +27,6 @@ public class LocalizationTest extends LinearOpMode {
             double vertical = -gamepad1.left_stick_y;
             double angle = -gamepad1.right_stick_x;
             drive.setWeightedDrivePower(vertical, horizontal, angle); // in roadrunner x and y are reversed
-
-            carousel.setPower(gamepad1.right_stick_y);
 
             drive.update();
 

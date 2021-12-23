@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp
 public class FreightFrenzyDrive extends FreightFrenzyOpMode {
 
+    {msStuckDetectLoop = 30_000;}
+
+
     private boolean slowMode = false;
-    private boolean lastAState, lastBumperState;
+    private boolean lastAState, lastLeftStickState, lastBumperState, lastAState2;
     private double acceleratePower = 0;
 
     @Override
@@ -26,33 +30,40 @@ public class FreightFrenzyDrive extends FreightFrenzyOpMode {
         lastAState = gamepad1.a;
 
         if (gamepad1.y) {
-            carousel.setPower(-0.5);
+            carousel.setPower(-carouselPower);
         } else {
             carousel.setPower(0);
         }
 
-        if (gamepad1.b) {
-            carousel.setPower(-1);
-        } else {
-            carousel.setPower(0);
+        if (gamepad2.a && !lastAState2) {
+            clamp.setPosition(0);
+            whileSleep(1000);
+            pulley.setPower(0.5);
+            whileSleep(() -> !railLimit.isPressed());
+            pulley.setPower(0.2);
         }
-
-
-        launcherArm.setPower(gamepad2.right_stick_y / 2);
 
         pulley.setPower(gamepad2.left_stick_y / 2);
 
+        arm.setPower(gamepad2.left_stick_x / 2);
+
         if (railLimit.isPressed()) {
-            launcherArm.setPower(0.3);
+            pulley.setPower(0.3);
         }
 
+        if (gamepad2.left_stick_button && !lastLeftStickState && clamp.getPosition() != 0) {
+            clamp.setPosition(0);
+        } else if (gamepad2.left_stick_button && !lastLeftStickState) {
+            clamp.setPosition(1);
+        }
+        lastLeftStickState = gamepad2.left_stick_button;
 
         if ((gamepad1.left_bumper && gamepad1.right_bumper) && !lastBumperState) {
-            intake.setPower(0);
+            intake.setVelocity(0);
         } else if (gamepad1.left_bumper && !lastBumperState) {
-            intake.setPower(intakePower);
+            intake.setVelocity(intakeVelocity * 360, AngleUnit.DEGREES);
         } else if (gamepad1.right_bumper && !lastBumperState) {
-            intake.setPower(-intakePower);
+            intake.setVelocity(-intakeVelocity * 360, AngleUnit.DEGREES);
         }
         lastBumperState = gamepad1.left_bumper || gamepad1.right_bumper;
 
