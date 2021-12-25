@@ -37,23 +37,7 @@ public class FreightFrenzyDrive extends FreightFrenzyOpMode {
         }
 
         if (gamepad2.a && !lastAState2) {
-            clamp.setPosition(0);
-            whileSleep(1000);
-            pulley.setPower(-0.5);
-            whileSleep(() -> !railLimit.isPressed());
-            pulley.setPower(-0.3);
-            arm.setTargetPosition(-2000);
-            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            arm.setTargetPosition(-2000);
-            arm.setPower(-0.3);
-            whileSleep(arm::isBusy);
-            arm.setPower(0);
-            whileSleep(1000);
-            clamp.setPosition(1.0);
-            whileSleep(3000);
-            clamp.setPosition(0);
-            whileSleep(1000);
-            pulley.setPower(0);
+            // TODO: run code from ArmAutomation
         }
         lastAState2 = gamepad1.a;
 
