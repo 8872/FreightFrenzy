@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp
@@ -38,10 +39,23 @@ public class FreightFrenzyDrive extends FreightFrenzyOpMode {
         if (gamepad2.a && !lastAState2) {
             clamp.setPosition(0);
             whileSleep(1000);
-            pulley.setPower(0.5);
+            pulley.setPower(-0.5);
             whileSleep(() -> !railLimit.isPressed());
-            pulley.setPower(0.2);
+            pulley.setPower(-0.3);
+            arm.setTargetPosition(-2000);
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.setTargetPosition(-2000);
+            arm.setPower(-0.3);
+            whileSleep(arm::isBusy);
+            arm.setPower(0);
+            whileSleep(1000);
+            clamp.setPosition(1.0);
+            whileSleep(3000);
+            clamp.setPosition(0);
+            whileSleep(1000);
+            pulley.setPower(0);
         }
+        lastAState2 = gamepad1.a;
 
         pulley.setPower(gamepad2.left_stick_y / 2);
 
@@ -61,18 +75,13 @@ public class FreightFrenzyDrive extends FreightFrenzyOpMode {
         if ((gamepad1.left_bumper && gamepad1.right_bumper) && !lastBumperState) {
             intake.setVelocity(0);
         } else if (gamepad1.left_bumper && !lastBumperState) {
-            intake.setVelocity(intakeVelocity * 360, AngleUnit.DEGREES);
+            intake.setVelocity(intakeVelocity, AngleUnit.DEGREES);
         } else if (gamepad1.right_bumper && !lastBumperState) {
-            intake.setVelocity(-intakeVelocity * 360, AngleUnit.DEGREES);
+            intake.setVelocity(-intakeVelocity, AngleUnit.DEGREES);
         }
         lastBumperState = gamepad1.left_bumper || gamepad1.right_bumper;
 
         update();
-    }
-
-    @Override
-    protected void initHardwareDevices() {
-
     }
 
     @Override
