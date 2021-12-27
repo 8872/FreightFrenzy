@@ -52,7 +52,7 @@ public abstract class BaseOpMode extends OpMode {
 
         brake(); // drive motors are already configured by SampleMecanumDrive
 
-        initHardwareDevices();
+        setUpHardwareDevices();
 
         composeTelemetry();
 
@@ -60,7 +60,7 @@ public abstract class BaseOpMode extends OpMode {
         telemetry.update();
     }
 
-    protected abstract void initHardwareDevices();
+    protected abstract void setUpHardwareDevices();
 
     protected void update() {
         telemetry.update();
@@ -153,12 +153,12 @@ public abstract class BaseOpMode extends OpMode {
     }
 
     @SuppressWarnings("SameParameterValue")
-    protected void whileSleep(long millis) {
+    protected void sleepWhile(long millis) {
         final long end = System.currentTimeMillis() + millis;
-        whileSleep(() -> System.currentTimeMillis() < end);
+        sleepWhile(() -> System.currentTimeMillis() < end);
     }
 
-    protected void whileSleep(BooleanSupplier supplier) {
+    protected void sleepWhile(BooleanSupplier supplier) {
         while (!isStopRequested() && supplier.getAsBoolean()) {
             Thread.yield();
             update();
@@ -168,7 +168,7 @@ public abstract class BaseOpMode extends OpMode {
     }
 
     protected void waitForRoadRunnerIdle() {
-        whileSleep(drive::isBusy);
+        sleepWhile(drive::isBusy);
     }
 
     protected final boolean isStopRequested() {

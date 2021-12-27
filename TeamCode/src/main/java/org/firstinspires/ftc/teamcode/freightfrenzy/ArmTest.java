@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.freightfrenzy;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous
 public class ArmTest extends AutonomousOpMode {
@@ -15,10 +14,10 @@ public class ArmTest extends AutonomousOpMode {
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setPower(-0.3);
         var time = System.currentTimeMillis();
-        whileSleep(arm::isBusy);
+        sleepWhile(arm::isBusy);
         System.out.println(System.currentTimeMillis() - time);
         if (System.currentTimeMillis() - time < 100) {
-            whileSleep(1000);
+            sleepWhile(1000);
         }
         arm.setPower(0);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

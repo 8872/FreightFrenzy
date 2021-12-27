@@ -33,39 +33,50 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
     }
 
     @Override
-    protected void initHardwareDevices() {
+    protected void setUpHardwareDevices() {
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    protected void extendArm() {
+    protected static class ArmPosition {
+        public static final int TOP_GOAL = -2200, MIDDLE_GOAL = -2400, BOTTOM_GOAL = -2600;
+    }
+
+    protected final void extendArm() {
         clamp.setPosition(0);
-        whileSleep(1000);
+        sleepWhile(700);
         pulley.setPower(-0.5);
-        whileSleep(() -> !railLimit.isPressed());
-        pulley.setPower(-0.3);
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        arm.setTargetPosition(-2200);
+        arm.setTargetPosition(ArmPosition.TOP_GOAL);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm.setPower(-0.3);
-        whileSleep(arm::isBusy);
-        arm.setPower(0);
-        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        whileSleep(1000);
-        clamp.setPosition(1.0);
-        whileSleep(2000);
+        arm.setPower(0.3);
+        boolean[] pulleyFinished = {false}, armFinished = {false}; // using array so vars can still be effectively final
+        sleepWhile(() -> {
+            if (!pulleyFinished[0] && railLimit.isPressed()) {
+                pulley.setPower(-0.3);
+                pulleyFinished[0] = true;
+            }
+            if (!armFinished[0] && !arm.isBusy()) {
+                arm.setPower(0);
+                arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                armFinished[0] = true;
+            }
+            return !railLimit.isPressed() || arm.isBusy(); // wait until both are done
+        });
+        clamp.setPosition(1);
+        sleepWhile(1000); // drop element
         pulley.setPower(0);
         arm.setTargetPosition(0);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setPower(0.3);
-        whileSleep(500);
+        sleepWhile(500);
         pulley.setPower(0.4); // retreat downward
-        whileSleep(800);
+        sleepWhile(800);
         pulley.setPower(0);
-        whileSleep(arm::isBusy);
+        sleepWhile(arm::isBusy);
         arm.setPower(0);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         System.out.println("Ran to target");
