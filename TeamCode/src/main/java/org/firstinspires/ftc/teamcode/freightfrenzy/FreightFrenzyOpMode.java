@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @Config
 abstract class FreightFrenzyOpMode extends BaseOpMode {
 
-    public static double intakeVelocity = 90, carouselPower = 0.5;
+    public static double intakeVelocity = 90, carouselPower = 0.5, pulleyIdlePower = -0.1;
 
     protected DcMotor carousel;
     protected DcMotorEx intake, pulley, arm;
@@ -38,6 +38,8 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pulley.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pulley.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     protected static class ArmPosition {
@@ -46,17 +48,17 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
 
     protected final void extendArm() {
         clamp.setPosition(0);
-        sleepWhile(700);
-        pulley.setPower(-0.5);
+        sleepWhile(300);
+        pulley.setPower(-0.4);
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         arm.setTargetPosition(ArmPosition.TOP_GOAL);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm.setPower(0.3);
+        arm.setPower(0.6);
         boolean[] pulleyFinished = {false}, armFinished = {false}; // using array so vars can still be effectively final
         sleepWhile(() -> {
             if (!pulleyFinished[0] && railLimit.isPressed()) {
-                pulley.setPower(-0.3);
+                pulley.setPower(pulleyIdlePower);
                 pulleyFinished[0] = true;
             }
             if (!armFinished[0] && !arm.isBusy()) {
@@ -67,7 +69,7 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
             return !railLimit.isPressed() || arm.isBusy(); // wait until both are done
         });
         clamp.setPosition(1);
-        sleepWhile(1000); // drop element
+        sleepWhile(400); // drop element
         pulley.setPower(0);
         arm.setTargetPosition(0);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);

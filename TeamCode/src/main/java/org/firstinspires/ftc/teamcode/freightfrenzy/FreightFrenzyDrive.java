@@ -45,12 +45,14 @@ public class FreightFrenzyDrive extends FreightFrenzyOpMode {
 
         // don't allow manual control of arm while automation is running
         if (poolFuture == null || poolFuture.isDone()) {
-            pulley.setPower(gamepad2.left_stick_y / 2);
+
 
             arm.setPower(gamepad2.left_stick_x / 2);
 
-            if (railLimit.isPressed()) {
-                pulley.setPower(0.3);
+            if (railLimit.isPressed() && gamepad2.left_stick_y <= 0) {
+                pulley.setPower(pulleyIdlePower);
+            } else {
+                pulley.setPower(gamepad2.left_stick_y / 2);
             }
 
             if (gamepad2.left_stick_button && !lastLeftStickState && clamp.getPosition() != 0) {
