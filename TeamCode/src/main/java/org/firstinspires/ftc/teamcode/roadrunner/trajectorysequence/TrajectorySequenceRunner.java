@@ -20,10 +20,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.sequencesegm
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.sequencesegment.WaitSegment;
 import org.firstinspires.ftc.teamcode.roadrunner.util.DashboardUtil;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 
 public class TrajectorySequenceRunner {
@@ -179,7 +176,11 @@ public class TrajectorySequenceRunner {
         poseHistory.add(poseEstimate);
 
         if (POSE_HISTORY_LIMIT > -1 && poseHistory.size() > POSE_HISTORY_LIMIT) {
-            poseHistory.removeFirst();
+            try {
+                poseHistory.removeFirst();
+            } catch (NoSuchElementException e) {
+                // TODO: why is linkedlist so broken?? :(((
+            }
         }
 
         packet.put("x", poseEstimate.getX());

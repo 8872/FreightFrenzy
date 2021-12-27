@@ -17,6 +17,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.BooleanSupplier;
 
 public abstract class BaseOpMode extends OpMode {
@@ -26,6 +29,10 @@ public abstract class BaseOpMode extends OpMode {
 
     protected DcMotor leftRear, rightRear, leftFront, rightFront;
     protected BNO055IMU imu;
+
+    protected static final ExecutorService pool = Executors.newSingleThreadExecutor();
+    @SuppressWarnings("rawtypes")
+    protected Future poolFuture;
 
     @Override
     public final void init() {
@@ -166,6 +173,15 @@ public abstract class BaseOpMode extends OpMode {
 
     protected final boolean isStopRequested() {
         return Thread.currentThread().isInterrupted();
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
+        if (poolFuture != null) {
+            poolFuture.cancel(true);
+            poolFuture = null;
+        }
     }
 
     /**

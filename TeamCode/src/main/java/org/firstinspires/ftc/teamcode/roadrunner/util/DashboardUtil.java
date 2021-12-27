@@ -16,14 +16,15 @@ public class DashboardUtil {
 
 
     public static void drawPoseHistory(Canvas canvas, List<Pose2d> poseHistory) {
-        double[] xPoints = new double[poseHistory.size()];
-        double[] yPoints = new double[poseHistory.size()];
-        for (int i = 0; i < poseHistory.size(); i++) {
-            Pose2d pose = poseHistory.get(i);
-            xPoints[i] = pose.getX();
-            yPoints[i] = pose.getY();
-        }
-        canvas.strokePolyline(xPoints, yPoints);
+        // TODO: fix NPE in this method
+//        double[] xPoints = new double[poseHistory.size()];
+//        double[] yPoints = new double[poseHistory.size()];
+//        for (int i = 0; i < poseHistory.size(); i++) {
+//            Pose2d pose = poseHistory.get(i);
+//            xPoints[i] = pose.getX();
+//            yPoints[i] = pose.getY();
+//        }
+//        canvas.strokePolyline(xPoints, yPoints);
     }
 
     public static void drawSampledPath(Canvas canvas, Path path, double resolution) {
