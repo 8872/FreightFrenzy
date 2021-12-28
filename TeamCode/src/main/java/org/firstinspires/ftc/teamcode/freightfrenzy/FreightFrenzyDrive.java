@@ -11,7 +11,8 @@ public class FreightFrenzyDrive extends FreightFrenzyOpMode {
 
     private boolean slowMode = false;
     private double acceleratePower = 0;
-    private boolean lastAState1, lastLeftStickState1, lastLeftStickState2, lastBumperState1, lastBState1;
+    private boolean lastLeftStickState1, lastLeftStickState2, lastBumperState1;
+    private boolean lastDpadState;
 
 
     @Override
@@ -37,19 +38,18 @@ public class FreightFrenzyDrive extends FreightFrenzyOpMode {
         }
 
 
-
-        // don't allow manual control of arm while automation is running
+        // only allow one arm action at a time
         if (poolFuture == null || poolFuture.isDone()) {
-
-            if (gamepad1.a && !lastAState1) {
-                poolFuture = pool.submit(armIsOut ? this::retractArm : this::pullOutArm);
+            if (gamepad1.dpad_up && !lastDpadState && !armIsOut) {
+                poolFuture = pool.submit(gamepad1.a ? () -> fullArmSequence(ArmPosition.TOP_GOAL) : () -> pullOutArm(ArmPosition.TOP_GOAL));
+            } else if (gamepad1.dpad_right && !lastDpadState && !armIsOut) {
+                poolFuture = pool.submit(gamepad1.a ? () -> fullArmSequence(ArmPosition.MIDDLE_GOAL) : () -> pullOutArm(ArmPosition.MIDDLE_GOAL));
+            } else if (gamepad1.dpad_down && !lastDpadState && !armIsOut) {
+                poolFuture = pool.submit(gamepad1.a ? () -> fullArmSequence(ArmPosition.BOTTOM_GOAL) : () -> pullOutArm(ArmPosition.BOTTOM_GOAL));
+            } else if (gamepad1.dpad_left && !lastDpadState && armIsOut) {
+                poolFuture = pool.submit(this::retractArm);
             }
-            lastAState1 = gamepad1.a;
-
-            if (gamepad1.b && !lastBState1) {
-                poolFuture = pool.submit(this::fullArmSequence);
-            }
-            lastBState1 = gamepad1.b;
+            lastDpadState = gamepad1.dpad_up || gamepad1.dpad_right || gamepad1.dpad_down || gamepad1.dpad_left;
 
             arm.setPower(gamepad2.left_stick_x / 2);
 

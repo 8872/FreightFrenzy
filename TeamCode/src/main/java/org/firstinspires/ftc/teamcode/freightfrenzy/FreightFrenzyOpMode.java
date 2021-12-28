@@ -44,15 +44,15 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
     }
 
     protected static class ArmPosition {
-        public static final int TOP_GOAL = -2200, MIDDLE_GOAL = -2400, BOTTOM_GOAL = -2600;
+        public static final int TOP_GOAL = -2200, MIDDLE_GOAL = -2700, BOTTOM_GOAL = -3000;
     }
 
-    protected final void fullArmSequence() {
-        pullOutArm();
+    protected final void fullArmSequence(int armPosition) {
+        pullOutArm(armPosition);
         retractArm();
     }
 
-    protected final void pullOutArm() {
+    protected void pullOutArm(int armPosition) {
         if (armIsOut) {
             return;
         }
@@ -61,7 +61,7 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         pulley.setPower(-0.4);
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        arm.setTargetPosition(ArmPosition.TOP_GOAL);
+        arm.setTargetPosition(armPosition);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setPower(0.6);
         boolean[] pulleyFinished = {false}, armFinished = {false}; // using array so vars can still be effectively final

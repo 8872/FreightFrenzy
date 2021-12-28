@@ -7,7 +7,7 @@ public class ArmAutomation extends AutonomousOpMode {
 
     @Override
     protected void runOpMode() {
-        fullArmSequence();
+        fullArmSequence(ArmPosition.TOP_GOAL);
         waitUntilRequestStop = true;
     }
 }
