@@ -12,6 +12,8 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
 
     public static double intakeVelocity = 90, carouselPower = 0.5, pulleyIdlePower = -0.1;
 
+    protected boolean armIsOut = false;
+
     protected DcMotor carousel;
     protected DcMotorEx intake, pulley, arm;
     protected Servo clamp;
@@ -29,7 +31,6 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         telemetry.addData("arm pos", arm::getCurrentPosition);
         telemetry.addData("arm busy", arm::isBusy);
         telemetry.addData("clamp", clamp::getPosition);
-        telemetry.addData("procs", Runtime.getRuntime()::availableProcessors);
     }
 
     @Override
@@ -46,7 +47,15 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         public static final int TOP_GOAL = -2200, MIDDLE_GOAL = -2400, BOTTOM_GOAL = -2600;
     }
 
-    protected final void extendArm() {
+    protected final void fullArmSequence() {
+        pullOutArm();
+        retractArm();
+    }
+
+    protected final void pullOutArm() {
+        if (armIsOut) {
+            return;
+        }
         clamp.setPosition(0);
         sleepWhile(300);
         pulley.setPower(-0.4);
@@ -68,6 +77,13 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
             }
             return !railLimit.isPressed() || arm.isBusy(); // wait until both are done
         });
+        armIsOut = true;
+    }
+
+    protected final void retractArm() {
+        if (!armIsOut) {
+            return;
+        }
         clamp.setPosition(1);
         sleepWhile(400); // drop element
         pulley.setPower(0);
@@ -81,6 +97,6 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         sleepWhile(arm::isBusy);
         arm.setPower(0);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        System.out.println("Ran to target");
+        armIsOut = false;
     }
 }

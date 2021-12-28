@@ -10,8 +10,9 @@ public class FreightFrenzyDrive extends FreightFrenzyOpMode {
 
 
     private boolean slowMode = false;
-    private boolean lastAState, lastLeftStickState, lastBumperState1, lastBumperState2, lastBState1, lastBState2;
     private double acceleratePower = 0;
+    private boolean lastAState1, lastLeftStickState1, lastLeftStickState2, lastBumperState1, lastBState1;
+
 
     @Override
     public void loop() {
@@ -24,10 +25,10 @@ public class FreightFrenzyDrive extends FreightFrenzyOpMode {
             mechanumDrive(slowMode, false, false);
         }
 
-        if (gamepad1.a && !lastAState) {
+        if (gamepad1.left_stick_button && !lastLeftStickState1) {
             slowMode = !slowMode;
         }
-        lastAState = gamepad1.a;
+        lastLeftStickState1 = gamepad1.left_stick_button;
 
         if (gamepad1.y) {
             carousel.setPower(-carouselPower);
@@ -35,17 +36,20 @@ public class FreightFrenzyDrive extends FreightFrenzyOpMode {
             carousel.setPower(0);
         }
 
-        if ((gamepad2.b && !lastBState2) || (gamepad1.b && !lastBState1)) {
-            if (poolFuture == null || poolFuture.isDone()) {
-                poolFuture = pool.submit(this::extendArm);
-            }
-        }
-        lastBState1 = gamepad1.a;
-        lastBState2 = gamepad2.a;
+
 
         // don't allow manual control of arm while automation is running
         if (poolFuture == null || poolFuture.isDone()) {
 
+            if (gamepad1.a && !lastAState1) {
+                poolFuture = pool.submit(armIsOut ? this::retractArm : this::pullOutArm);
+            }
+            lastAState1 = gamepad1.a;
+
+            if (gamepad1.b && !lastBState1) {
+                poolFuture = pool.submit(this::fullArmSequence);
+            }
+            lastBState1 = gamepad1.b;
 
             arm.setPower(gamepad2.left_stick_x / 2);
 
@@ -55,24 +59,23 @@ public class FreightFrenzyDrive extends FreightFrenzyOpMode {
                 pulley.setPower(gamepad2.left_stick_y / 2);
             }
 
-            if (gamepad2.left_stick_button && !lastLeftStickState && clamp.getPosition() != 0) {
+            if (gamepad2.left_stick_button && !lastLeftStickState2 && clamp.getPosition() != 0) {
                 clamp.setPosition(0);
-            } else if (gamepad2.left_stick_button && !lastLeftStickState) {
+            } else if (gamepad2.left_stick_button && !lastLeftStickState2) {
                 clamp.setPosition(1);
             }
-            lastLeftStickState = gamepad2.left_stick_button;
+            lastLeftStickState2 = gamepad2.left_stick_button;
         }
 
 
-        if (((gamepad1.left_bumper && gamepad1.right_bumper) && !lastBumperState1) || ((gamepad2.left_bumper && gamepad2.right_bumper) && !lastBumperState2)) {
+        if (gamepad1.left_bumper && gamepad1.right_bumper && !lastBumperState1) {
             intake.setVelocity(0);
-        } else if ((gamepad1.left_bumper && !lastBumperState1) || (gamepad2.left_bumper && !lastBumperState2)) {
+        } else if (gamepad1.left_bumper && !lastBumperState1) {
             intake.setVelocity(intakeVelocity, AngleUnit.DEGREES);
-        } else if ((gamepad1.right_bumper && !lastBumperState1) || (gamepad2.right_bumper && !lastBumperState2)) {
+        } else if (gamepad1.right_bumper && !lastBumperState1) {
             intake.setVelocity(-intakeVelocity, AngleUnit.DEGREES);
         }
         lastBumperState1 = gamepad1.left_bumper || gamepad1.right_bumper;
-        lastBumperState2 = gamepad2.left_bumper || gamepad2.right_bumper;
 
         update();
     }
