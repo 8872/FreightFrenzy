@@ -16,7 +16,7 @@ public class T265Localizer implements Localizer {
 
     // We treat this like a singleton because there should only ever be one object per camera
     private static T265Camera slamra = null;
-    public static boolean ENABLE_T265 = false;
+    public static boolean ENABLE_T265 = true;
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 

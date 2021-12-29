@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.freightfrenzy;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -37,6 +38,7 @@ public abstract class BaseOpMode extends OpMode {
     @Override
     public final void init() {
         drive = new SampleMecanumDrive(hardwareMap);
+        drive.setPoseEstimate(new Pose2d());
         hardwareMap.voltageSensor.forEach(voltageSensor -> {
             if (voltageSensor.getVoltage() < 12.7) {
                 RobotLog.addGlobalWarningMessage("Battery voltage is very low. Motors may not run at full speed");
