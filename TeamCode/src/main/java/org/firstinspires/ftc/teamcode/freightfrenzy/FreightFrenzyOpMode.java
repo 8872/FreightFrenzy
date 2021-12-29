@@ -63,6 +63,9 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         arm.setTargetPosition(armPosition);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if (armPosition < ArmPosition.MIDDLE_GOAL) {
+            sleep(500);
+        }
         arm.setPower(0.6);
         boolean[] pulleyFinished = {false}, armFinished = {false}; // using array so vars can still be effectively final
         sleepWhile(() -> {
@@ -75,7 +78,7 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
                 arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 armFinished[0] = true;
             }
-            return !railLimit.isPressed() || arm.isBusy(); // wait until both are done
+            return !pulleyFinished[0] || !armFinished[0]; // wait until both are done
         });
         armIsOut = true;
     }
@@ -89,9 +92,12 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         pulley.setPower(0);
         arm.setTargetPosition(0);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm.setPower(0.3);
+        arm.setPower(0.6);
+        if (arm.getCurrentPosition() < ArmPosition.MIDDLE_GOAL - 100) {
+            sleep(500);
+        }
         sleepWhile(500);
-        pulley.setPower(0.4); // retreat downward
+        pulley.setPower(0.5); // retreat downward
         sleepWhile(800);
         pulley.setPower(0);
         sleepWhile(arm::isBusy);
