@@ -17,12 +17,12 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
     protected DcMotor carousel;
     protected DcMotorEx intake, pulley, arm;
     protected Servo clamp;
-    protected TouchSensor railLimit;
+    protected TouchSensor railLimit, armLimit;
 
     @Override
     protected void composeTelemetry() {
         super.composeTelemetry();
-        telemetry.addData("touch sensor", railLimit::isPressed);
+        telemetry.addData("touch sensor", armLimit::isPressed);
         telemetry.addData("carousel", carousel::getPower);
         telemetry.addData("intake", intake::getPower);
         telemetry.addData("intake velocity", () -> intake.getVelocity(AngleUnit.DEGREES));
@@ -41,6 +41,8 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pulley.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pulley.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        clamp.setPosition(1);
     }
 
     protected static class ArmPosition {
@@ -90,19 +92,16 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         clamp.setPosition(1);
         sleepWhile(400); // drop element
         pulley.setPower(0);
-        arm.setTargetPosition(0);
-        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setPower(0.6);
         if (arm.getCurrentPosition() < ArmPosition.MIDDLE_GOAL - 100) {
-            sleep(500);
+            sleepWhile(500);
         }
         sleepWhile(500);
         pulley.setPower(0.5); // retreat downward
         sleepWhile(800);
         pulley.setPower(0);
-        sleepWhile(arm::isBusy);
+        sleepWhile(() -> !armLimit.isPressed());
         arm.setPower(0);
-        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armIsOut = false;
     }
 }
