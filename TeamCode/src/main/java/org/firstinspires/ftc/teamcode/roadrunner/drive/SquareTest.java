@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous(group = "drive")
 public class SquareTest extends LinearOpMode {
-    public static double DISTANCE = 60; // in
+    public static double DISTANCE = 40; // in
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -28,26 +28,27 @@ public class SquareTest extends LinearOpMode {
                 .forward(DISTANCE)
                 .build();
 
-        Trajectory trajectory2 = drive.trajectoryBuilder(new Pose2d())
+        Trajectory trajectory2 = drive.trajectoryBuilder(trajectory1.end())
                 .strafeLeft(DISTANCE)
                 .build();
 
-        Trajectory trajectory3 = drive.trajectoryBuilder(new Pose2d())
+        Trajectory trajectory3 = drive.trajectoryBuilder(trajectory2.end())
                 .forward(-DISTANCE)
                 .build();
 
-        Trajectory trajectory4 = drive.trajectoryBuilder(new Pose2d())
+        Trajectory trajectory4 = drive.trajectoryBuilder(trajectory3.end())
                 .strafeRight(DISTANCE)
                 .build();
 
         waitForStart();
 
-        if (isStopRequested()) return;
 
-        drive.followTrajectory(trajectory1);
-        drive.followTrajectory(trajectory2);
-        drive.followTrajectory(trajectory3);
-        drive.followTrajectory(trajectory4);
+        for (int i = 0; i < 3 && !isStopRequested(); i++) {
+            drive.followTrajectory(trajectory1);
+            drive.followTrajectory(trajectory2);
+            drive.followTrajectory(trajectory3);
+            drive.followTrajectory(trajectory4);
+        }
 
         Pose2d poseEstimate = drive.getPoseEstimate();
         telemetry.addData("finalX", poseEstimate.getX());
@@ -55,6 +56,6 @@ public class SquareTest extends LinearOpMode {
         telemetry.addData("finalHeading", poseEstimate.getHeading());
         telemetry.update();
 
-        while (!isStopRequested() && opModeIsActive()) ;
+        while (opModeIsActive()) ;
     }
 }

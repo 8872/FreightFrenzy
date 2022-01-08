@@ -18,10 +18,13 @@ public class TestAuto extends AutonomousOpMode {
 
     @Override
     protected void runOpMode() throws InterruptedException {
+
         Trajectory trajectory1R = drive.trajectoryBuilder(startPoseR)
-                .lineToLinearHeading(new Pose2d(-50, -60, Math.toRadians(90)))
+//                .lineToLinearHeading(new Pose2d(-50, -60, Math.toRadians(90)))
+                .strafeLeft(50)
                 .build();
-        drive.setPoseEstimate(startPoseR);
+
+//        drive.turn(Math.toRadians(90));
         drive.followTrajectory(trajectory1R);
 
         waitUntilRequestStop = true;

@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @Config
 abstract class FreightFrenzyOpMode extends BaseOpMode {
 
-    public static double intakeVelocity = 90, carouselPower = 0.5, pulleyIdlePower = -0.1;
+    public static double intakeVelocity = 90, carouselPower = 0.5, pulleyIdlePower = -0.1, armPower = 0.5;
 
     protected boolean armIsOut = false;
 
@@ -29,7 +29,7 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         telemetry.addData("pulley", pulley::getPower);
         telemetry.addData("arm", arm::getPower);
         telemetry.addData("arm pos", arm::getCurrentPosition);
-        telemetry.addData("arm busy", arm::isBusy);
+        telemetry.addData("arm velocity", arm::getVelocity);
         telemetry.addData("clamp", clamp::getPosition);
     }
 
@@ -69,7 +69,7 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         if (armPosition < ArmPosition.MIDDLE_GOAL) {
             sleep(500);
         }
-        arm.setPower(0.6);
+        arm.setPower(armPower);
         boolean[] pulleyFinished = {false}, armFinished = {false}; // using array so vars can still be effectively final
         sleepWhile(() -> {
             if (!pulleyFinished[0] && railLimit.isPressed()) {
@@ -93,7 +93,7 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         clamp.setPosition(1);
         sleepWhile(400); // drop element
         pulley.setPower(0);
-        arm.setPower(0.6);
+        arm.setPower(armPower);
         if (arm.getCurrentPosition() < ArmPosition.MIDDLE_GOAL - 100) {
             sleepWhile(500);
         }

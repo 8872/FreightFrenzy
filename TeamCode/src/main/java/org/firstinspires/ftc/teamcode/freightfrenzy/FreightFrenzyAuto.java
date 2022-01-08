@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.freightfrenzy;
 
+import androidx.annotation.Nullable;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -19,9 +20,11 @@ public class FreightFrenzyAuto extends AutonomousOpMode {
     private static final String VUFORIA_KEY =
             "AR1EGWL/////AAABmao6fwhlA0nZgC4AC92PSFIkRoulXKGjKgy0eFqp2+gwuiWL9ULzw2QJD/Jr7os9Xby/GjZHBwwPW3P6vvVfidwd556TIQRTX6NzaGOooiLjLWebMMHcEJdvLD+4VdbHvZaEiXlH4O/Vb+Rqqo+PS5LUE9LQxnYtSYvbtWDVz757S56MSByBrH7Zt7zTFu0a3Rlvr7s7o9wGR74qQ1jI/vIuWWUIWXPUXCb9L+TVqMPFk0yOumhdyUhmTf8JXBPOWnppwXKJ7049tnegzoc6Ov+IuIu7FsKYgrLa2dI9iufeFN8/ITlZTzkmjl17KhdPbQpiJs68rleAN3LIsFsgSpL5ZWxd4ZcZ3WeEFaEREQfn";
 
-    private static final String TFOD_MODEL_ASSET = "/sdcard/FIRST/vision/model_20220106_160314.tflite";
+    private static final String TFOD_MODEL_ASSET = "/sdcard/FIRST/vision/FreightFrenzy_DM.tflite";
 
-    private static final String LABEL = "Shipping_Element";
+    private static final String[] LABELS = {
+            "Duck",
+    };
 
     private enum Positions {
         LEFT,
@@ -50,6 +53,7 @@ public class FreightFrenzyAuto extends AutonomousOpMode {
                         recognition.getLeft(), recognition.getTop());
                 telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
                         recognition.getRight(), recognition.getBottom());
+                telemetry.addData("position " + i, getPosition(recognition));
                 i++;
             }
             update();
@@ -127,8 +131,26 @@ public class FreightFrenzyAuto extends AutonomousOpMode {
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         tfodParameters.minResultConfidence = 0.8f;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromFile(TFOD_MODEL_ASSET, LABEL);
+        tfod.loadModelFromFile(TFOD_MODEL_ASSET, LABELS);
         tfod.activate();
-        tfod.setZoom(1.5, 16.0 / 9.0);
+        tfod.setZoom(1.3, 16.0 / 9.0);
+    }
+
+    private enum DuckPosition {
+        LEFT, MIDDLE, RIGHT;
+    }
+
+    @Nullable
+    private DuckPosition getPosition(Recognition recognition) {
+        double pos = recognition.getLeft();
+        if (pos > 0 && pos < 200) {
+            return DuckPosition.LEFT;
+        } else if (pos > 300 && pos < 400) {
+            return DuckPosition.MIDDLE;
+        } else if (pos > 500) {
+            return DuckPosition.RIGHT;
+        } else {
+            return null;
+        }
     }
 }

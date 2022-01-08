@@ -46,7 +46,7 @@ public class T265Localizer implements Localizer {
 
     @Override
     public void setPoseEstimate(@NotNull Pose2d newPose) {
-        translation = new Pose2d(newPose.getX(), newPose.getY(), newPose.getHeading() + 270);
+        translation = new Pose2d(newPose.getX(), newPose.getY(), 0);
         if (ENABLE_T265) {
             slamra.setPose(origin);
             System.out.println("New pose: " + internalPose());
