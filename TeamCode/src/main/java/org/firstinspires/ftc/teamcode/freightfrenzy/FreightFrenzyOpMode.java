@@ -59,6 +59,7 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
             return;
         }
         clamp.setPosition(0);
+        intake.setVelocity(0);
         sleepWhile(300);
         pulley.setPower(-0.4);
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
