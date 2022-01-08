@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 @Autonomous
 public class TestAuto extends AutonomousOpMode {
 
-    private Pose2d startPoseR = new Pose2d(-33, -60, Math.toRadians(90));
+    private final Pose2d startPoseR = new Pose2d(-33, -60, Math.toRadians(90));
 
     @Override
     protected void setUpHardwareDevices() {
@@ -21,6 +21,7 @@ public class TestAuto extends AutonomousOpMode {
         Trajectory trajectory1R = drive.trajectoryBuilder(startPoseR)
                 .lineToLinearHeading(new Pose2d(-50, -60, Math.toRadians(90)))
                 .build();
+        drive.setPoseEstimate(startPoseR);
         drive.followTrajectory(trajectory1R);
 
         waitUntilRequestStop = true;

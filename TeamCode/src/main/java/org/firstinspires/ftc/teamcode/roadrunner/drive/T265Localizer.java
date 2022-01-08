@@ -1,10 +1,9 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
-import com.acmerobotics.dashboard.FtcDashboard;
+import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
-import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Transform2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.spartronics4915.lib.T265Camera;
@@ -18,31 +17,39 @@ public class T265Localizer implements Localizer {
     private static T265Camera slamra = null;
     public static boolean ENABLE_T265 = true;
 
-    private final FtcDashboard dashboard = FtcDashboard.getInstance();
+    private static final com.arcrobotics.ftclib.geometry.Pose2d origin = new com.arcrobotics.ftclib.geometry.Pose2d();
 
+    private static volatile Pose2d translation = new Pose2d();
 
     public T265Localizer(HardwareMap hardwareMap) {
-        if (slamra == null && ENABLE_T265) {
+        if (ENABLE_T265 && slamra == null) {
             slamra = new T265Camera(new Transform2d(), 0.1, hardwareMap.appContext);
             slamra.start();
         }
-
+        slamra.setPose(origin);
     }
 
     @NotNull
     @Override
     public Pose2d getPoseEstimate() {
         if (ENABLE_T265) {
-            return new Pose2d(toInches(internalPose().getX()), toInches(internalPose().getY()), internalPose().getHeading());
+            var internalPose = internalPose();
+            var untranslated = new Pose2d(toInches(internalPose.getX()), toInches(internalPose.getY()), internalPose.getHeading());
+            var translated = untranslated.plus(translation);
+            Log.v("PoseEstimate", "untranslated = " + untranslated);
+            Log.v("PoseEstimate", "translated = " + translated);
+            return translated;
         } else {
-            return new Pose2d();
+            return translation;
         }
     }
 
     @Override
-    public void setPoseEstimate(@NotNull Pose2d pose2d) {
+    public void setPoseEstimate(@NotNull Pose2d newPose) {
+        translation = new Pose2d(newPose.getX(), newPose.getY(), newPose.getHeading() + 270);
         if (ENABLE_T265) {
-            slamra.setPose(new com.arcrobotics.ftclib.geometry.Pose2d(toMeters(pose2d.getX()), toMeters(pose2d.getY()), new Rotation2d((pose2d.getHeading()))));
+            slamra.setPose(origin);
+            System.out.println("New pose: " + internalPose());
         }
     }
 
@@ -50,7 +57,7 @@ public class T265Localizer implements Localizer {
     @Override
     public Pose2d getPoseVelocity() {
         if (ENABLE_T265) {
-            return new Pose2d(slamra.getLastReceivedCameraUpdate().velocity.vxMetersPerSecond / 0.0254, slamra.getLastReceivedCameraUpdate().velocity.vyMetersPerSecond / 0.0254);
+            return new Pose2d(toInches(slamra.getLastReceivedCameraUpdate().velocity.vxMetersPerSecond), toInches(slamra.getLastReceivedCameraUpdate().velocity.vyMetersPerSecond), slamra.getLastReceivedCameraUpdate().velocity.omegaRadiansPerSecond);
         } else {
             return new Pose2d();
         }
@@ -58,7 +65,6 @@ public class T265Localizer implements Localizer {
 
     @Override
     public void update() {
-
     }
 
     private static com.arcrobotics.ftclib.geometry.Pose2d internalPose() {
