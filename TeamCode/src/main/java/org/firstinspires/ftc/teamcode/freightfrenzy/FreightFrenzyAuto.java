@@ -12,6 +12,9 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
 
+import static org.firstinspires.ftc.teamcode.freightfrenzy.AutoConstants.headingCarousel;
+import static org.firstinspires.ftc.teamcode.freightfrenzy.AutoConstants.inchesBack;
+
 @Autonomous
 public class FreightFrenzyAuto extends AutonomousOpMode {
     private final boolean red;
@@ -25,6 +28,7 @@ public class FreightFrenzyAuto extends AutonomousOpMode {
     private static final String[] LABELS = {
             "Duck",
     };
+
 
     private enum Positions {
         LEFT,
@@ -41,7 +45,10 @@ public class FreightFrenzyAuto extends AutonomousOpMode {
     @Override
     public void init_loop() {
         super.init_loop();
-        List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+        List<Recognition> updatedRecognitions = null;
+        if (tfod != null) {
+            updatedRecognitions = tfod.getUpdatedRecognitions();
+        }
         if (updatedRecognitions != null) {
             telemetry.addData("# Object Detected", updatedRecognitions.size());
 
@@ -69,9 +76,19 @@ public class FreightFrenzyAuto extends AutonomousOpMode {
         update();
 
         //red
-        trajectory1R = drive.trajectoryBuilder(startPoseR)
-                .lineToLinearHeading(new Pose2d(-50, -60, Math.toRadians(90)))
-                .build();
+        if (red) {
+//            trajectory1R = drive.trajectoryBuilder(startPoseR)
+//                    .lineToLinearHeading(new Pose2d(-60, -60, Math.toRadians(headingCarousel)))
+//                    .build();
+
+            trajectory1R = drive.trajectoryBuilder(new Pose2d(startPoseR.getX(), startPoseR.getY(), Math.toRadians(headingCarousel)))
+                    .back(inchesBack)
+                    .build();
+        } else {
+            trajectory1R = drive.trajectoryBuilder(startPoseB)
+                    .lineToLinearHeading(new Pose2d(-60, -60, Math.toRadians(90)))
+                    .build();
+        }
         trajectory2R = drive.trajectoryBuilder(trajectory1R.end())
                 .lineToLinearHeading(new Pose2d(-12, -46, Math.toRadians(-90)))
                 .build();
@@ -89,12 +106,13 @@ public class FreightFrenzyAuto extends AutonomousOpMode {
                 .splineToLinearHeading(new Pose2d(54, 54, Math.toRadians(0)), Math.toRadians(0))
                 .build();
 
-        initializeTfod();
+//        initializeTfod();
     }
 
     @Override
     protected void runOpMode() throws InterruptedException {
         if (red) {
+            drive.turn(headingCarousel);
             drive.followTrajectory(trajectory1R); //turn on carousel
             carousel.setPower(carouselPower);
             sleepWhile(10_000);

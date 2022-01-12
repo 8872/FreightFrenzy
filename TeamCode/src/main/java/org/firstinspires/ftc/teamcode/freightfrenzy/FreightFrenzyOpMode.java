@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @Config
@@ -46,7 +47,7 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
     }
 
     protected static class ArmPosition {
-        public static final int TOP_GOAL = -2200, MIDDLE_GOAL = -2700, BOTTOM_GOAL = -3000;
+        public static final int TOP_GOAL = -1600, MIDDLE_GOAL = -1900, BOTTOM_GOAL = -2200;
     }
 
     protected final void fullArmSequence(int armPosition) {
@@ -71,6 +72,7 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         }
         arm.setPower(armPower);
         boolean[] pulleyFinished = {false}, armFinished = {false}; // using array so vars can still be effectively final
+        long endTimeout = System.currentTimeMillis() + 5000;
         sleepWhile(() -> {
             if (!pulleyFinished[0] && railLimit.isPressed()) {
                 pulley.setPower(pulleyIdlePower);
@@ -81,7 +83,15 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
                 arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 armFinished[0] = true;
             }
-            return !pulleyFinished[0] || !armFinished[0]; // wait until both are done
+            if (System.currentTimeMillis() > endTimeout) {
+                arm.setPower(0);
+                arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                pulley.setPower(pulleyIdlePower);
+                RobotLog.addGlobalWarningMessage("Arm/pulley movement timed out. Check the rail limit switch or arm encoder.");
+                return false;
+            } else {
+                return !pulleyFinished[0] || !armFinished[0]; // wait until both are done
+            }
         });
         armIsOut = true;
     }
@@ -101,7 +111,15 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         pulley.setPower(0.5); // retreat downward
         sleepWhile(800);
         pulley.setPower(0);
-        sleepWhile(() -> !armLimit.isPressed());
+        long endTimeout = System.currentTimeMillis() + 7000;
+        sleepWhile(() -> {
+            if (System.currentTimeMillis() > endTimeout) {
+                RobotLog.addGlobalWarningMessage("Arm movement timed out. Check the arm limit switch.");
+                return false;
+            } else {
+                return !armLimit.isPressed();
+            }
+        });
         arm.setPower(0);
         armIsOut = false;
     }
