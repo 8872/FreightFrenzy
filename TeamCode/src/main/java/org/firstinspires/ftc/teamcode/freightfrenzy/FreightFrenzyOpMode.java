@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @Config
 abstract class FreightFrenzyOpMode extends BaseOpMode {
 
-    public static double intakeVelocity = 90, carouselPower = 0.5, pulleyIdlePower = -0.1, armPower = 0.5;
+    public static double intakeVelocity = 90, carouselPower = -0.5, pulleyIdlePower = -0.1, armPower = 0.5;
 
     protected boolean armIsOut = false;
 
