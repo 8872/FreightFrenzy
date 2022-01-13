@@ -12,7 +12,7 @@ public class ParkAuto extends AutonomousOpMode {
         drive.setPoseEstimate(new Pose2d());
         Trajectory forward = drive.trajectoryBuilder(new Pose2d()).forward(15).build();
         drive.followTrajectory(forward);
-        drive.turn(Math.toRadians(-90));
+        drive.turn(-90);
         drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate()).forward(100).build());
 
         waitUntilRequestStop = true;

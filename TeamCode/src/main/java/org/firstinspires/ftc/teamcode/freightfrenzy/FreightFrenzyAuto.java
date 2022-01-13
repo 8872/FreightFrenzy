@@ -119,6 +119,7 @@ public class FreightFrenzyAuto extends AutonomousOpMode {
             drive.followTrajectory(trajectory1R); //turn on carousel
             drive.followTrajectory(trajectory1R2);
             carousel.setPower(carouselPower);
+            drive.setWeightedDrivePower(-0.2, 0, 0);
             sleepWhile(5_000);
             carousel.setPower(0);
 
@@ -128,9 +129,9 @@ public class FreightFrenzyAuto extends AutonomousOpMode {
 //            drive.turnAsync(90);
             var t1 = drive.trajectoryBuilder(trajectory1R2.end()).forward(60).build();
             drive.followTrajectory(t1);
-            var t2 = drive.trajectoryBuilder(t1.end()).strafeLeft(15).build();
+            var t2 = drive.trajectoryBuilder(t1.end()).strafeLeft(13).build();
             drive.followTrajectory(t2);
-            var t3 = drive.trajectoryBuilder(t2.end()).forward(70).build();
+            var t3 = drive.trajectoryBuilder(t2.end()).forward(80).build();
             drive.followTrajectory(t3);
 
 //            fullArmSequence(ArmPosition.TOP_GOAL); //drop off payload (pulley, arm)

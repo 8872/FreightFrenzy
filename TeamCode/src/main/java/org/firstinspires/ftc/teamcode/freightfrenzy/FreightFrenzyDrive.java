@@ -33,7 +33,7 @@ public class FreightFrenzyDrive extends FreightFrenzyOpMode {
         lastLeftStickState1 = gamepad1.left_stick_button;
 
         if (gamepad1.y) {
-            carousel.setPower(-carouselPower);
+            carousel.setPower(carouselPower);
         } else {
             carousel.setPower(0);
         }
