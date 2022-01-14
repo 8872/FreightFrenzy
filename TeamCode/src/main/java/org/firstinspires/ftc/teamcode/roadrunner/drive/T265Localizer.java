@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
 import com.arcrobotics.ftclib.geometry.Transform2d;
+import com.intel.realsense.librealsense.UsbUtilities;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.spartronics4915.lib.T265Camera;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +25,7 @@ public class T265Localizer implements Localizer {
     public T265Localizer(HardwareMap hardwareMap) {
         if (ENABLE_T265 && slamra == null) {
             slamra = new T265Camera(new Transform2d(), 0.1, hardwareMap.appContext);
+            UsbUtilities.grantUsbPermissionIfNeeded(hardwareMap.appContext);
             slamra.start();
         }
         slamra.setPose(origin);
@@ -36,8 +38,9 @@ public class T265Localizer implements Localizer {
             var internalPose = internalPose();
             var untranslated = new Pose2d(toInches(internalPose.getX()), toInches(internalPose.getY()), internalPose.getHeading());
             var translated = untranslated.plus(translation);
-            Log.v("PoseEstimate", "untranslated = " + untranslated);
-            Log.v("PoseEstimate", "translated = " + translated);
+//            Log.v("PoseEstimate", "untranslated = " + untranslated);
+//            Log.v("PoseEstimate", "translated = " + translated);
+            Log.v("T265", String.valueOf(untranslated.getHeading()));
             return translated;
         } else {
             return translation;

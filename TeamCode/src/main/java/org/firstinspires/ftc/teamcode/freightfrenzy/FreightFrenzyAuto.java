@@ -28,13 +28,6 @@ public class FreightFrenzyAuto extends AutonomousOpMode {
             "Duck",
     };
 
-
-    private enum Positions {
-        LEFT,
-        MIDDLE,
-        RIGHT
-    }
-
     private enum AutoType {
         CAROUSEL,
         FREIGHT
@@ -110,6 +103,7 @@ public class FreightFrenzyAuto extends AutonomousOpMode {
                 .splineToLinearHeading(new Pose2d(54, 54, Math.toRadians(0)), Math.toRadians(0))
                 .build();
 
+        initializeTfod();
     }
 
     @Override
@@ -177,9 +171,9 @@ public class FreightFrenzyAuto extends AutonomousOpMode {
     @Nullable
     private DuckPosition getPosition(Recognition recognition) {
         double pos = recognition.getLeft();
-        if (pos > 0 && pos < 200) {
+        if (pos > 0 && pos < 240) {
             return DuckPosition.LEFT;
-        } else if (pos > 300 && pos < 400) {
+        } else if (pos > 250 && pos < 450) {
             return DuckPosition.MIDDLE;
         } else if (pos > 500) {
             return DuckPosition.RIGHT;
