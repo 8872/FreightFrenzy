@@ -15,7 +15,7 @@ import java.util.List;
 import static org.firstinspires.ftc.teamcode.freightfrenzy.AutoConstants.*;
 
 @Autonomous
-public class FreightFrenzyAuto extends AutonomousOpMode {
+public class FreightPlacementAuto extends AutonomousOpMode {
     private final boolean red;
     private Trajectory trajectory1R, trajectory1R2, trajectory2R, trajectory3R, trajectory1B, trajectory2B, trajectory3B;
 
@@ -35,7 +35,7 @@ public class FreightFrenzyAuto extends AutonomousOpMode {
 
     private TFObjectDetector tfod;
 
-    public FreightFrenzyAuto(boolean red) {
+    public FreightPlacementAuto(boolean red) {
         this.red = red;
     }
 
@@ -103,7 +103,7 @@ public class FreightFrenzyAuto extends AutonomousOpMode {
                 .splineToLinearHeading(new Pose2d(54, 54, Math.toRadians(0)), Math.toRadians(0))
                 .build();
 
-//        initializeTfod();
+        initializeTfod();
     }
 
     @Override
@@ -118,17 +118,17 @@ public class FreightFrenzyAuto extends AutonomousOpMode {
             carousel.setPower(0);
 
 
-//            drive.followTrajectory(trajectory2R);
+            drive.followTrajectory(trajectory2R);
 
 //            drive.turnAsync(90);
-            var t1 = drive.trajectoryBuilder(trajectory1R2.end()).forward(60).build();
-            drive.followTrajectory(t1);
-            var t2 = drive.trajectoryBuilder(t1.end()).strafeLeft(13).build();
-            drive.followTrajectory(t2);
-            var t3 = drive.trajectoryBuilder(t2.end()).forward(80).build();
-            drive.followTrajectory(t3);
+//            var t1 = drive.trajectoryBuilder(trajectory1R2.end()).forward(60).build();
+//            drive.followTrajectory(t1);
+//            var t2 = drive.trajectoryBuilder(t1.end()).strafeLeft(13).build();
+//            drive.followTrajectory(t2);
+//            var t3 = drive.trajectoryBuilder(t2.end()).forward(80).build();
+//            drive.followTrajectory(t3);
 
-//            fullArmSequence(ArmPosition.TOP_GOAL); //drop off payload (pulley, arm)
+            fullArmSequence(ArmPosition.TOP_GOAL); //drop off payload (pulley, arm)
 //            drive.followTrajectory(trajectory3R);
         } else {
             drive.followTrajectory(trajectory1B);

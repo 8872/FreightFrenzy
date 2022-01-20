@@ -10,7 +10,7 @@ public class ParkSetPowerAuto extends AutonomousOpMode {
         drive.setWeightedDrivePower(0, 0.3, 0);
         sleepWhile(600);
         drive.setWeightedDrivePower(0.7, 0, 0);
-        sleepWhile(5000);
+        sleepWhile(3500);
         drive.setWeightedDrivePower(0, 0, 0);
 
     }
