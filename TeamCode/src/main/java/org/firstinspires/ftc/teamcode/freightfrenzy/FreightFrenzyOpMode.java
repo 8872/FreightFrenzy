@@ -18,7 +18,7 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
     protected DcMotor carousel;
     protected DcMotorEx intake, pulley, arm;
     protected Servo clamp;
-    protected TouchSensor railLimit, armLimit;
+    protected TouchSensor railTopLimit, railBottomLimit, armLimit;
 
     @Override
     protected void composeTelemetry() {
@@ -74,7 +74,7 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         boolean[] pulleyFinished = {false}, armFinished = {false}; // using array so vars can still be effectively final
         long endTimeout = System.currentTimeMillis() + 5000;
         sleepWhile(() -> {
-            if (!pulleyFinished[0] && railLimit.isPressed()) {
+            if (!pulleyFinished[0] && railTopLimit.isPressed()) {
                 pulley.setPower(pulleyIdlePower);
                 pulleyFinished[0] = true;
             }
@@ -109,15 +109,26 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         }
         sleepWhile(500);
         pulley.setPower(0.5); // retreat downward
-        sleepWhile(800);
-        pulley.setPower(0);
-        long endTimeout = System.currentTimeMillis() + 7000;
+        boolean[] pulleyFinished = {false}, armFinished = {false}; // using array so vars can still be effectively final
+        long endTimeout = System.currentTimeMillis() + 9000;
         sleepWhile(() -> {
+            if (!pulleyFinished[0] && railBottomLimit.isPressed()) {
+                pulley.setPower(0);
+                pulleyFinished[0] = true;
+            }
+            if (!armFinished[0] && !arm.isBusy()) {
+                arm.setPower(0);
+                arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                armFinished[0] = true;
+            }
             if (System.currentTimeMillis() > endTimeout) {
-                RobotLog.addGlobalWarningMessage("Arm movement timed out. Check the arm limit switch.");
+                arm.setPower(0);
+                arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                pulley.setPower(0);
+                RobotLog.addGlobalWarningMessage("Arm/pulley movement timed out. Check the limit switches or arm encoder.");
                 return false;
             } else {
-                return !armLimit.isPressed();
+                return !pulleyFinished[0] || !armFinished[0]; // wait until both are done
             }
         });
         arm.setPower(0);
