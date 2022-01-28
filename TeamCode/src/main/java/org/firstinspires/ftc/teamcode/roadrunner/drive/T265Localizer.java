@@ -27,8 +27,8 @@ public class T265Localizer implements Localizer {
             slamra = new T265Camera(new Transform2d(), 0.1, hardwareMap.appContext);
             UsbUtilities.grantUsbPermissionIfNeeded(hardwareMap.appContext);
             slamra.start();
+            slamra.setPose(origin);
         }
-        slamra.setPose(origin);
     }
 
     @NotNull

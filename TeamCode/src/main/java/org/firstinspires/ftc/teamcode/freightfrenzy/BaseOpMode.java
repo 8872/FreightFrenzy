@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.freightfrenzy;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -27,7 +27,7 @@ public abstract class BaseOpMode extends OpMode {
     protected SampleMecanumDrive drive;
     protected final Telemetry dashTelemetry = FtcDashboard.getInstance().getTelemetry();
 
-    protected DcMotor leftRear, rightRear, leftFront, rightFront;
+    protected DcMotorEx leftRear, rightRear, leftFront, rightFront;
     protected BNO055IMU imu;
 
     protected static final ExecutorService pool = Executors.newSingleThreadExecutor();
@@ -79,6 +79,10 @@ public abstract class BaseOpMode extends OpMode {
         telemetry.addData("leftRear", () -> round(leftRear.getPower()));
         telemetry.addData("rightFront", () -> round(rightFront.getPower()));
         telemetry.addData("rightRear", () -> round(rightRear.getPower()));
+        telemetry.addData("leftFrontE", leftFront::getCurrentPosition);
+        telemetry.addData("leftRearE", leftRear::getCurrentPosition);
+        telemetry.addData("rightFrontE", rightFront::getCurrentPosition);
+        telemetry.addData("rightRearE", rightRear::getCurrentPosition);
         telemetry.addData("x", () -> imu.getPosition().x);
         telemetry.addData("y", () -> imu.getPosition().y);
         telemetry.addData("Imu Heading", () -> imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);

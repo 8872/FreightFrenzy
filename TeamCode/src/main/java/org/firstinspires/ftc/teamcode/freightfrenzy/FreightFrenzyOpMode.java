@@ -23,7 +23,9 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
     @Override
     protected void composeTelemetry() {
         super.composeTelemetry();
-        telemetry.addData("touch sensor", armLimit::isPressed);
+        telemetry.addData("armLimit", armLimit::isPressed);
+        telemetry.addData("railTopLimit", railTopLimit::isPressed);
+        telemetry.addData("railBottomLimit", railBottomLimit::isPressed);
         telemetry.addData("carousel", carousel::getPower);
         telemetry.addData("intake", intake::getPower);
         telemetry.addData("intake velocity", () -> intake.getVelocity(AngleUnit.DEGREES));
