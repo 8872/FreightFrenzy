@@ -29,15 +29,18 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         telemetry.addData("carousel", carousel::getPower);
         telemetry.addData("intake", intake::getPower);
         telemetry.addData("intake velocity", () -> intake.getVelocity(AngleUnit.DEGREES));
-        telemetry.addData("pulley", pulley::getPower);
-        telemetry.addData("arm", arm::getPower);
+        telemetry.addData("pulley power", pulley::getPower);
+        telemetry.addData("arm power", arm::getPower);
         telemetry.addData("arm pos", arm::getCurrentPosition);
+        telemetry.addData("arm target", arm::getTargetPosition);
+        telemetry.addData("arm busy", arm::isBusy);
         telemetry.addData("arm velocity", arm::getVelocity);
         telemetry.addData("clamp", clamp::getPosition);
     }
 
     @Override
     protected void setUpHardwareDevices() {
+        super.setUpHardwareDevices();
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -118,7 +121,7 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
                 pulley.setPower(0);
                 pulleyFinished[0] = true;
             }
-            if (!armFinished[0] && !arm.isBusy()) {
+            if (!armFinished[0] && armLimit.isPressed()) {
                 arm.setPower(0);
                 arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 armFinished[0] = true;

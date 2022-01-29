@@ -24,7 +24,7 @@ public class FreightFrenzyDrive extends FreightFrenzyOpMode {
         if (!drive.isBusy() && (gamepad1.x || acceleratePower != 0)) {
             acceleratePower = accelerate(gamepad1.x, acceleratePower);
         } else if (!drive.isBusy()) {
-            mechanumDrive(slowMode, false, false);
+            mechanumDrive(slowMode);
         }
 
         if (gamepad1.left_stick_button && !lastLeftStickState1) {
@@ -81,14 +81,18 @@ public class FreightFrenzyDrive extends FreightFrenzyOpMode {
         }
         lastDpadState2 = gamepad2.dpad_up || gamepad2.dpad_right || gamepad2.dpad_down || gamepad2.dpad_left;
 
-        arm.setPower(gamepad2.left_stick_x / 2);
 
+        if (!armLimit.isPressed() || (armLimit.isPressed() && gamepad2.left_stick_x < 0)) {
+            arm.setPower(gamepad2.left_stick_x * armPower);
+        } else {
+            arm.setPower(0);
+        }
 
         if (railTopLimit.isPressed() && gamepad2.left_stick_y <= 0) {
             pulley.setPower(pulleyIdlePower);
         } else if (railBottomLimit.isPressed() && gamepad2.left_stick_y >= 0) {
             pulley.setPower(0);
-        } else {
+        } else if (!armIsOut) {
             pulley.setPower(gamepad2.left_stick_y / 2);
         }
 
