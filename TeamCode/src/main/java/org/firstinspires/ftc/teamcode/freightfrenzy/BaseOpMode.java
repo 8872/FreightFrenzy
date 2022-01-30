@@ -45,9 +45,9 @@ public abstract class BaseOpMode extends OpMode {
         });
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        imu.initialize(parameters);
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+//        imu.initialize(parameters);
 
         initHardware();
 
@@ -93,7 +93,7 @@ public abstract class BaseOpMode extends OpMode {
         telemetry.addData("leftRearE", leftRear::getCurrentPosition);
         telemetry.addData("rightFrontE", rightFront::getCurrentPosition);
         telemetry.addData("rightRearE", rightRear::getCurrentPosition);
-        telemetry.addData("Imu Heading", () -> imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+//        telemetry.addData("Imu Heading", () -> imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
     }
 
     protected void mechanumDrive(boolean slowMode) {

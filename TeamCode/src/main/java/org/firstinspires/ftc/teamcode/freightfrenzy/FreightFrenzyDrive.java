@@ -34,6 +34,8 @@ public class FreightFrenzyDrive extends FreightFrenzyOpMode {
 
         if (gamepad1.y) {
             carousel.setPower(carouselPower);
+        } else if (gamepad1.b) {
+            carousel.setPower(-carouselPower);
         } else {
             carousel.setPower(0);
         }

@@ -37,6 +37,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.freightfrenzy.CameraDropOffFreight;
 
 import java.util.List;
 
@@ -115,7 +116,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(1.3, 16.0 / 9.0);
+            tfod.setZoom(1.6, 16.0 / 9.0);
         }
 
         /** Wait for the game to begin */
@@ -153,17 +154,14 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
         LEFT, MIDDLE, RIGHT;
     }
 
-    @Nullable
     private DuckPosition getPosition(Recognition recognition) {
         double pos = recognition.getLeft();
-        if (pos > 0 && pos < 240) {
-            return DuckPosition.LEFT;
-        } else if (pos > 250 && pos < 450) {
+        if (pos > 150 && pos < 300) {
             return DuckPosition.MIDDLE;
-        } else if (pos > 500) {
+        } else if (pos > 350) {
             return DuckPosition.RIGHT;
         } else {
-            return null;
+            return DuckPosition.LEFT;
         }
     }
 
