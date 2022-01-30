@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.freightfrenzy;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @Autonomous
 public class DropOffFreight extends AutonomousOpMode {
@@ -29,7 +28,7 @@ public class DropOffFreight extends AutonomousOpMode {
         fullArmSequence(ArmPosition.TOP_GOAL);
 
         // park
-        drive.turnAsync(Math.toRadians(110));
+        drive.turnAsync(Math.toRadians(120));
         sleepWhile(drive::isBusy);
         drive.setWeightedDrivePower(0, -0.1, 0);
         sleepWhile(2000);

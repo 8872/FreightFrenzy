@@ -13,6 +13,8 @@ public class FreightFrenzyDrive extends FreightFrenzyOpMode {
 
     private boolean slowMode = false;
     private double acceleratePower = 0;
+    private final double increment = 0.011;
+    private double carouselPowerTeleop = 0.3;
     private boolean lastLeftStickState1, lastLeftStickState2, lastBumperState1, lastBumperState2;
     private boolean lastDpadState, lastDpadState2;
 
@@ -33,11 +35,13 @@ public class FreightFrenzyDrive extends FreightFrenzyOpMode {
         lastLeftStickState1 = gamepad1.left_stick_button;
 
         if (gamepad1.y) {
-            carousel.setPower(carouselPower);
+            carousel.setPower(((carouselPowerTeleop < 0.75) ? carouselPowerTeleop += increment : carouselPowerTeleop));
+//            carousel.setPower(carouselPower);
         } else if (gamepad1.b) {
-            carousel.setPower(-carouselPower);
+            carousel.setPower(-1);
         } else {
             carousel.setPower(0);
+            carouselPowerTeleop = 0.3;
         }
 
 

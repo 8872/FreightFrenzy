@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.freightfrenzy;
 
 
-import androidx.annotation.Nullable;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -26,7 +24,7 @@ public class CameraDropOffFreight extends AutonomousOpMode {
 
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
-    private DuckPosition duckPosition = DuckPosition.LEFT;
+    private DuckPosition duckPosition = DuckPosition.RIGHT;
 
     private enum DuckPosition {
         LEFT, MIDDLE, RIGHT;
@@ -76,7 +74,7 @@ public class CameraDropOffFreight extends AutonomousOpMode {
         sleepWhile(200);
         drive.setWeightedDrivePower(-0.5, -0.01, 0);
         sleepWhile(500);
-        drive.setWeightedDrivePower(-0.05, 0, 0);
+        drive.setWeightedDrivePower(-0.02, 0, 0);
         carousel.setPower(carouselPower);
         sleepWhile(5000);
         carousel.setPower(0);
@@ -90,31 +88,39 @@ public class CameraDropOffFreight extends AutonomousOpMode {
         sleepWhile(drive::isBusy);
         switch (duckPosition) {
             case LEFT:
+            case RIGHT:
                 fullArmSequence(ArmPosition.TOP_GOAL);
                 break;
             case MIDDLE:
                 drive.setWeightedDrivePower(0.3, 0, 0);
-                sleep(500);
+                sleep(350);
                 drive.setWeightedDrivePower(0, 0, 0);
                 fullArmSequence(ArmPosition.MIDDLE_GOAL);
                 drive.setWeightedDrivePower(-0.3, 0, 0);
-                sleep(500);
+                sleep(350);
                 break;
-            case RIGHT:
-                drive.setWeightedDrivePower(0.3, 0, 0);
-                sleep(550);
-                drive.setWeightedDrivePower(0, 0, 0);
-                fullArmSequence(ArmPosition.BOTTOM_GOAL);
-                drive.setWeightedDrivePower(-0.3, 0, 0);
-                sleep(550);
-                break;
+//            case LEFT:
+//                drive.setWeightedDrivePower(0.3, 0, 0);
+//                sleep(500);
+//                drive.setWeightedDrivePower(0, 0, 0);
+//                pullOutArm(ArmPosition.BOTTOM_GOAL);
+//                drive.setWeightedDrivePower(-0.3, 0, 0);
+//                sleep(150);
+//                drive.setWeightedDrivePower(0,-0.3,0);
+//                sleep(250);
+//                drive.setWeightedDrivePower(0, 0, 0);
+//                sleep(100);
+//                retractArm();
+//                drive.setWeightedDrivePower(-0.3, 0, 0);
+//                sleep(400);
+//                break;
         }
         drive.setWeightedDrivePower(0, 0, 0);
         // park
-        drive.turnAsync(Math.toRadians(103));
+        drive.turnAsync(Math.toRadians(110));
         sleepWhile(drive::isBusy);
-        drive.setWeightedDrivePower(0, -0.1, 0);
-        sleepWhile(2000);
+//        drive.setWeightedDrivePower(0, -0.1, 0);
+//        sleepWhile(2000);
         drive.setWeightedDrivePower(0.5, 0, 0);
         sleepWhile(5000);
         drive.setWeightedDrivePower(0, 0, 0);
