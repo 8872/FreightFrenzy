@@ -25,6 +25,7 @@ dependencies {
      * Other Modules
      */
     implementation project(':FtcRobotController')
+    implementation 'org.openftc:easyopencv:1.5.1'
 }
 repositories {
     maven { url = 'https://maven.brott.dev/' } // for FTC Dashboard
