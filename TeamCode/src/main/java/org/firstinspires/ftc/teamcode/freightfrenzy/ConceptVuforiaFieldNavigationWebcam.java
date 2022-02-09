@@ -29,9 +29,11 @@
 
 package org.firstinspires.ftc.teamcode.freightfrenzy;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -94,6 +96,7 @@ public class ConceptVuforiaFieldNavigationWebcam extends LinearOpMode {
     private static final float halfField = 72 * mmPerInch;
     private static final float halfTile = 12 * mmPerInch;
     private static final float oneAndHalfTile = 36 * mmPerInch;
+    protected final Telemetry dashTelemetry = FtcDashboard.getInstance().getTelemetry();
 
     // Class Members
     private OpenGLMatrix lastLocation = null;
@@ -216,9 +219,10 @@ public class ConceptVuforiaFieldNavigationWebcam extends LinearOpMode {
 
             // check all the trackable targets to see which one (if any) is visible.
             targetVisible = false;
+            Telemetry telemetry = this.telemetry;
             for (VuforiaTrackable trackable : allTrackables) {
                 if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
-                    telemetry.addData("Visible Target", trackable.getName());
+                    dashTelemetry.addData("Visible Target", trackable.getName());
                     targetVisible = true;
 
                     // getUpdatedRobotLocation() will return null if no new information is available since
@@ -235,16 +239,16 @@ public class ConceptVuforiaFieldNavigationWebcam extends LinearOpMode {
             if (targetVisible) {
                 // express position (translation) of robot in inches.
                 VectorF translation = lastLocation.getTranslation();
-                telemetry.addData("Pos (inches)", "{X, Y, Z} = %.1f, %.1f, %.1f",
+                dashTelemetry.addData("Pos (inches)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                         translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
 
                 // express the rotation of the robot in degrees.
                 Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-                telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+                dashTelemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
             } else {
-                telemetry.addData("Visible Target", "none");
+                dashTelemetry.addData("Visible Target", "none");
             }
-            telemetry.update();
+            dashTelemetry.update();
         }
 
         // Disable Tracking when we are done;
