@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.freightfrenzy;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -10,14 +12,17 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 @Autonomous
 public class ShippingElementDetectionEOCV extends OpMode {
+
+    Telemetry dashTelemetry = FtcDashboard.getInstance().getTelemetry();
     OpenCvWebcam webcam;
+    ShippingElementPipeline pipeline = new ShippingElementPipeline();
 
     @Override
     public void init() {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        webcam.setPipeline(new ShippingElementPipeline());
+        webcam.setPipeline(pipeline);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -37,6 +42,11 @@ public class ShippingElementDetectionEOCV extends OpMode {
 
     @Override
     public void loop() {
-
+        telemetry.addData("Analysis", pipeline.getAnalysis());
+        telemetry.addData("Avg1", pipeline.getAvg()[0]);
+        telemetry.addData("Avg2", pipeline.getAvg()[1]);
+        telemetry.addData("Avg3", pipeline.getAvg()[2]);
+        dashTelemetry.addData("Analysis", pipeline.getAnalysis());
+        telemetry.update();
     }
 }
