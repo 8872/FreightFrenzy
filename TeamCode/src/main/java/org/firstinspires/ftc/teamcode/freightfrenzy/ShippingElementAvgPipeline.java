@@ -6,7 +6,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 @Config
-public class ShippingElementPipeline extends OpenCvPipeline {
+public class ShippingElementAvgPipeline extends OpenCvPipeline {
     enum ShippingElementPosition {
         LEFT,
         CENTER,
@@ -26,21 +26,18 @@ public class ShippingElementPipeline extends OpenCvPipeline {
     Scalar lower = new Scalar(lower1, lower2, lower3);
     Scalar higher = new Scalar(higher1, higher2, higher3);
 
+    // Scalar lower = new Scalar(0);
+    // Scalar higher = new Scalar(100);
 
     Mat YCbCrMat = new Mat();
     Mat CbMat = new Mat();
 
+    // Change channel 1 for Cr channel. The orange-red will appear white since there is a small difference
     public static int channel = 2;
     public static boolean inRange = true;
     public static boolean clean = true;
     static final Scalar BLUE = new Scalar(0, 0, 255);
     static final Scalar GREEN = new Scalar(0, 255, 0);
-
-
-//    public static int point1X = 650;
-//    public static int point1Y = 650;
-//    public static int point2X = 800;
-//    public static int point2Y = 800;
 
     public static boolean returnCbMat = false;
 

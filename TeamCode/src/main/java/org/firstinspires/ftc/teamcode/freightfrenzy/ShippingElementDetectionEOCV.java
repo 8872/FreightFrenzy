@@ -15,7 +15,7 @@ public class ShippingElementDetectionEOCV extends OpMode {
 
     Telemetry dashTelemetry = FtcDashboard.getInstance().getTelemetry();
     OpenCvWebcam webcam;
-    ShippingElementPipeline pipeline = new ShippingElementPipeline();
+    ShippingElementAvgPipeline pipeline = new ShippingElementAvgPipeline();
 
     @Override
     public void init() {
