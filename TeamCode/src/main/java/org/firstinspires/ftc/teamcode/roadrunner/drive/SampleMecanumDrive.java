@@ -125,14 +125,13 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
-            setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
-        }
+//        if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
+//            setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
+//        }
 
         // TODO: reverse any motors using DcMotor.setDirection()
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         // TODO: if desired, use setLocalizer() to change the localization method
 //        setLocalizer(new T265Localizer(hardwareMap));
 

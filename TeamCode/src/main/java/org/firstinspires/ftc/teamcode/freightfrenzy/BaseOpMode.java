@@ -8,9 +8,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
 import java.lang.reflect.Field;
@@ -197,7 +194,15 @@ public abstract class BaseOpMode extends OpMode {
     }
 
     /**
-     * This method takes all fields in this class and subclasses of type
+     * <pre>
+     * This method takes all fields in this class and all subclasses of type HardwareDevice (like DcMotor, Servo) and assigns them to a value from the hardware map the same as the field name.
+     *
+     * For example if you have a field in the class like
+     *
+     * {@code private DcMotor armMotor;}
+     *
+     * It will automatically initialize it to {@code hardwareMap.get(DcMotor.class, "armMotor");}
+     * </pre>
      */
     @SuppressWarnings("rawtypes")
     private void initHardware() {

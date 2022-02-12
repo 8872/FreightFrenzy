@@ -7,7 +7,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
@@ -39,8 +38,8 @@ public class AutomaticFeedforwardTuner extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         if (RUN_USING_ENCODER) {
-            RobotLog.setGlobalErrorMsg("Feedforward constants usually don't need to be tuned " +
-                    "when using the built-in drive motor velocity PID.");
+//            RobotLog.setGlobalErrorMsg("Feedforward constants usually don't need to be tuned " +
+//                    "when using the built-in drive motor velocity PID.");
         }
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());

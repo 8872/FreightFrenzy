@@ -11,7 +11,6 @@ import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
 import java.util.Objects;
@@ -64,8 +63,8 @@ public class ManualFeedforwardTuner extends LinearOpMode {
     @Override
     public void runOpMode() {
         if (RUN_USING_ENCODER) {
-            RobotLog.setGlobalErrorMsg("Feedforward constants usually don't need to be tuned " +
-                    "when using the built-in drive motor velocity PID.");
+//            RobotLog.setGlobalErrorMsg("Feedforward constants usually don't need to be tuned " +
+//                    "when using the built-in drive motor velocity PID.");
         }
 
 //        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
