@@ -1,5 +1,5 @@
 tasks.whenTaskAdded { task ->
-    if (task.name.toLowerCase().contains("lint") || task.name.toLowerCase().contains("test")) {
+    if (task.name.contains("Test")) {
         task.enabled = false
     }
 }
