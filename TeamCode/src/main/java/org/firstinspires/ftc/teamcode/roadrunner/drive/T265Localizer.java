@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
 import android.util.Log;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
 import com.arcrobotics.ftclib.geometry.Transform2d;
@@ -11,7 +10,7 @@ import com.spartronics4915.lib.T265Camera;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@Config
+//@Config
 public class T265Localizer implements Localizer {
 
     // We treat this like a singleton because there should only ever be one object per camera

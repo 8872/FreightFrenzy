@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode.freightfrenzy;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Config
+//@Config
 @Autonomous
 public class CarouselSetPowerAuto extends AutonomousOpMode {
     public static int sleep1 = 200;

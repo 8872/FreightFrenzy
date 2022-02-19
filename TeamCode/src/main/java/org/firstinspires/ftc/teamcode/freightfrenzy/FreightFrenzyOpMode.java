@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.freightfrenzy;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -8,7 +7,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@Config
+//@Config
 abstract class FreightFrenzyOpMode extends BaseOpMode {
 
     public static double intakeVelocity = 90, carouselPower = -0.5, pulleyIdlePower = -0.1, armPower = 0.5;

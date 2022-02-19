@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.freightfrenzy;
 
-import com.acmerobotics.dashboard.config.Config;
-
-@Config
+//@Config
 public class AutoConstants {
 
     public static int headingCarousel = -90;

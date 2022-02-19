@@ -1,7 +1,6 @@
  package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
-import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 /*
  * Constants shared between multiple drive types.
@@ -15,7 +14,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
  * and op modes themselves.
  */
 
- @Config
+ //@Config
 public class DriveConstants {
 
      /*
