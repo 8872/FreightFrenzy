@@ -13,9 +13,10 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Autonomous
 public class ShippingElementDetectionEOCV extends OpMode {
 
-    Telemetry dashTelemetry = FtcDashboard.getInstance().getTelemetry();
+//    Telemetry dashTelemetry = FtcDashboard.getInstance().getTelemetry();
     OpenCvWebcam webcam;
     ShippingElementAvgPipeline pipeline = new ShippingElementAvgPipeline();
+    protected final Telemetry dashTelemetry = FtcDashboard.getInstance().getTelemetry();
 
     @Override
     public void init() {
@@ -42,11 +43,11 @@ public class ShippingElementDetectionEOCV extends OpMode {
 
     @Override
     public void loop() {
-        telemetry.addData("Analysis", pipeline.getAnalysis());
-        telemetry.addData("Avg1", pipeline.getAvg()[0]);
-        telemetry.addData("Avg2", pipeline.getAvg()[1]);
-        telemetry.addData("Avg3", pipeline.getAvg()[2]);
         dashTelemetry.addData("Analysis", pipeline.getAnalysis());
-        telemetry.update();
+        dashTelemetry.addData("Avg1", pipeline.getAvg()[0]);
+        dashTelemetry.addData("Avg2", pipeline.getAvg()[1]);
+        dashTelemetry.addData("Avg3", pipeline.getAvg()[2]);
+        dashTelemetry.addData("Analysis", pipeline.getAnalysis());
+        dashTelemetry.update();
     }
 }

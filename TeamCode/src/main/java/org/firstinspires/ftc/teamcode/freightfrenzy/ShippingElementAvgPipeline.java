@@ -15,9 +15,9 @@ public class ShippingElementAvgPipeline extends OpenCvPipeline {
 
     ShippingElementPosition position;
 
-    public static int lower1 = 100;
-    public static int lower2 = 100;
-    public static int lower3 = 100;
+    public static int lower1 = 148;
+    public static int lower2 = 148;
+    public static int lower3 = 148;
 
     public static int higher1 = 255;
     public static int higher2 = 255;
@@ -33,7 +33,7 @@ public class ShippingElementAvgPipeline extends OpenCvPipeline {
     Mat CbMat = new Mat();
 
     // Change channel 1 for Cr channel. The orange-red will appear white since there is a small difference
-    public static int channel = 2;
+    public static int channel = 1;
     public static boolean inRange = true;
     public static boolean clean = true;
     static final Scalar BLUE = new Scalar(0, 0, 255);
@@ -41,6 +41,7 @@ public class ShippingElementAvgPipeline extends OpenCvPipeline {
 
     public static boolean returnCbMat = false;
 
+    public static int region1x, region1y, region2x, region2y, region3x, region3y;
     static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(650, 650); // center
     static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(1250, 650); // left
     static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(200, 650); // right
@@ -104,28 +105,28 @@ public class ShippingElementAvgPipeline extends OpenCvPipeline {
         avg3 = (int) Core.mean(region3_Cb).val[0]; // right
 
         Imgproc.rectangle(
-                CbMat, // Buffer to draw on
+                input, // Buffer to draw on
                 region1_pointA, // First point which defines the rectangle
                 region1_pointB, // Second point which defines the rectangle
                 BLUE, // The color the rectangle is drawn in
                 -1); // Thickness of the rectangle lines
 
         Imgproc.rectangle(
-                CbMat, // Buffer to draw on
+                input, // Buffer to draw on
                 region2_pointA, // First point which defines the rectangle
                 region2_pointB, // Second point which defines the rectangle
                 BLUE, // The color the rectangle is drawn in
                 -1); // Thickness of the rectangle lines
 
         Imgproc.rectangle(
-                CbMat, // Buffer to draw on
+                input, // Buffer to draw on
                 region3_pointA, // First point which defines the rectangle
                 region3_pointB, // Second point which defines the rectangle
                 BLUE, // The color the rectangle is drawn in
                 -1); // Thickness of the rectangle lines
 
-        int maxOneTwo = Math.min(avg1, avg2);
-        int max = Math.min(maxOneTwo, avg3);
+        int maxOneTwo = Math.max(avg1, avg2);
+        int max = Math.max(maxOneTwo, avg3);
 
 
         if (max == avg1) {
