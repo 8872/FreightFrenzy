@@ -26,6 +26,7 @@ dependencies {
      */
     implementation project(':FtcRobotController')
     implementation 'org.openftc:easyopencv:1.5.1'
+    implementation 'org.openftc:apriltag:1.0.0'
 }
 repositories {
     maven { url = 'https://maven.brott.dev/' } // for FTC Dashboard
