@@ -24,7 +24,7 @@ public class SquareTest extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         drive.setPoseEstimate(new Pose2d());
-
+        drive.resetNavPose();
         Trajectory trajectory1 = drive.trajectoryBuilder(new Pose2d())
                 .forward(DISTANCE)
                 .build();
