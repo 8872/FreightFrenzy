@@ -21,25 +21,30 @@
 
 package org.firstinspires.ftc.teamcode.freightfrenzy;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
 
 @TeleOp
-public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
-{
+@Config
+
+public class AprilTagAutonomousInitDetectionExample extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
+    protected final Telemetry dashTelemetry = FtcDashboard.getInstance().getTelemetry();
+
 
     static final double FEET_PER_METER = 3.28084;
+    static final double INCH_PER_FEET = 12.0;
 
     // Lens intrinsics
     // UNITS ARE PIXELS
@@ -51,31 +56,27 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
     double cy = 221.506;
 
     // UNITS ARE METERS
-    double tagsize = 0.166;
+    double tagsize = 0.166; // needs to be changed
 
     int ID_TAG_OF_INTEREST = 18; // Tag ID 18 from the 36h11 family
 
     AprilTagDetection tagOfInterest = null;
 
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
         camera.setPipeline(aprilTagDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
-                camera.startStreaming(1920,1080, OpenCvCameraRotation.UPRIGHT); // width: 800, height: 448
+            public void onOpened() {
+                camera.startStreaming(800, 448, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
-            public void onError(int errorCode)
-            {
+            public void onError(int errorCode) {
 
             }
         });
@@ -86,62 +87,47 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
          * The INIT-loop:
          * This REPLACES waitForStart!
          */
-        while (!isStarted() && !isStopRequested())
-        {
+        while (!isStarted() && !isStopRequested()) {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
-            if(currentDetections.size() != 0)
-            {
+            if (currentDetections.size() != 0) {
                 boolean tagFound = false;
 
-                for(AprilTagDetection tag : currentDetections)
-                {
-                    if(tag.id == ID_TAG_OF_INTEREST)
-                    {
+                for (AprilTagDetection tag : currentDetections) {
+                    if (tag.id == ID_TAG_OF_INTEREST) {
                         tagOfInterest = tag;
                         tagFound = true;
                         break;
                     }
                 }
 
-                if(tagFound)
-                {
-                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                if (tagFound) {
+                    dashTelemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
-                }
-                else
-                {
-                    telemetry.addLine("Don't see tag of interest :(");
+                } else {
+                    dashTelemetry.addLine("Don't see tag of interest :(");
 
-                    if(tagOfInterest == null)
-                    {
-                        telemetry.addLine("(The tag has never been seen)");
-                    }
-                    else
-                    {
-                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                    if (tagOfInterest == null) {
+                        dashTelemetry.addLine("(The tag has never been seen)");
+                    } else {
+                        dashTelemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
                         tagToTelemetry(tagOfInterest);
                     }
                 }
 
-            }
-            else
-            {
-                telemetry.addLine("Don't see tag of interest :(");
+            } else {
+                dashTelemetry.addLine("Don't see tag of interest :(");
 
-                if(tagOfInterest == null)
-                {
-                    telemetry.addLine("(The tag has never been seen)");
-                }
-                else
-                {
-                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                if (tagOfInterest == null) {
+                    dashTelemetry.addLine("(The tag has never been seen)");
+                } else {
+                    dashTelemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
                     tagToTelemetry(tagOfInterest);
                 }
 
             }
 
-            telemetry.update();
+            dashTelemetry.update();
             sleep(20);
         }
 
@@ -151,60 +137,64 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
          */
 
         /* Update the telemetry */
-        if(tagOfInterest != null)
-        {
-            telemetry.addLine("Tag snapshot:\n");
+        if (tagOfInterest != null) {
+            dashTelemetry.addLine("Tag snapshot:\n");
             tagToTelemetry(tagOfInterest);
-            telemetry.update();
-        }
-        else
-        {
+            dashTelemetry.update();
+        } else {
             telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
-            telemetry.update();
+            dashTelemetry.update();
         }
 
         /* Actually do something useful */
-        if(tagOfInterest == null)
-        {
+        if (tagOfInterest == null) {
+            dashTelemetry.addData("TSE Position", "No Tag Detected!");
             /*
              * Insert your autonomous code here, presumably running some default configuration
              * since the tag was never sighted during INIT
              */
-        }
-        else
-        {
+        } else {
             /*
              * Insert your autonomous code here, probably using the tag pose to decide your configuration.
              */
 
             // e.g.
-            if(tagOfInterest.pose.x <= 20)
-            {
-                // do something
-            }
-            else if(tagOfInterest.pose.x >= 20 && tagOfInterest.pose.x <= 50)
-            {
-                // do something else
-            }
-            else if(tagOfInterest.pose.x >= 50)
-            {
-                // do something else
-            }
+//            if (tagOfInterest.pose.x * FEET_PER_METER * INCH_PER_FEET <= -7) {
+//                // do something
+//                dashTelemetry.addData("TSE Position", "LEFT");
+//            } else if (tagOfInterest.pose.x * FEET_PER_METER * INCH_PER_FEET > -7 && tagOfInterest.pose.x * FEET_PER_METER * INCH_PER_FEET < 7) {
+//                // do something else
+//                dashTelemetry.addData("TSE Position", "MIDDLE");
+//            } else if (tagOfInterest.pose.x * FEET_PER_METER * INCH_PER_FEET >= 7) {
+//                // do something else
+//                dashTelemetry.addData("TSE Position", "RIGHT");
+//            }
         }
 
 
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
-        while (opModeIsActive()) {sleep(20);}
+        while (opModeIsActive()) {
+            sleep(20);
+        }
     }
 
-    void tagToTelemetry(AprilTagDetection detection)
-    {
-        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
-        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
-        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
-        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+    void tagToTelemetry(AprilTagDetection detection) {
+        dashTelemetry.addData("Detected tag", detection.id);
+        dashTelemetry.addData("Translation X", detection.pose.x * FEET_PER_METER * INCH_PER_FEET + " inch");
+        dashTelemetry.addData("Translation Y", detection.pose.y * FEET_PER_METER * INCH_PER_FEET + " inch");
+        dashTelemetry.addData("Translation Z", detection.pose.z * FEET_PER_METER * INCH_PER_FEET + " inch");
+        dashTelemetry.addData("Rotation Yaw", Math.toDegrees(detection.pose.yaw));
+        dashTelemetry.addData("Rotation Pitch", Math.toDegrees(detection.pose.pitch));
+        dashTelemetry.addData("Rotation Roll", Math.toDegrees(detection.pose.roll));
+        if (detection.pose.x * FEET_PER_METER * INCH_PER_FEET <= -7) {
+            // do something
+            dashTelemetry.addData("TSE Position", "LEFT");
+        } else if (detection.pose.x * FEET_PER_METER * INCH_PER_FEET > -7 && detection.pose.x * FEET_PER_METER * INCH_PER_FEET < 7) {
+            // do something else
+            dashTelemetry.addData("TSE Position", "MIDDLE");
+        } else if (detection.pose.x * FEET_PER_METER * INCH_PER_FEET >= 7) {
+            // do something else
+            dashTelemetry.addData("TSE Position", "RIGHT");
+        }
     }
 }
