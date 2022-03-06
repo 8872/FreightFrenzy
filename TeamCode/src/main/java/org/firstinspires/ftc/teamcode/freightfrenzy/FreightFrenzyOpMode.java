@@ -15,10 +15,10 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
 
     protected boolean armIsOut = false;
 
-    protected DcMotor carousel;
-    protected DcMotorEx intake, pulley, arm;
-    protected Servo clamp;
-    protected TouchSensor railTopLimit, railBottomLimit, armLimit;
+    protected DcMotor carousel = BadDcMotor.INSTANCE;
+    protected DcMotorEx intake = BadDcMotor.INSTANCE, pulley = BadDcMotor.INSTANCE, arm = BadDcMotor.INSTANCE;
+    protected Servo clamp = BadServo.INSTABCE;
+    protected TouchSensor railTopLimit = BadTouchSensor.INSTANCE, railBottomLimit = BadTouchSensor.INSTANCE, armLimit = BadTouchSensor.INSTANCE;
 
     @Override
     protected void composeTelemetry() {
