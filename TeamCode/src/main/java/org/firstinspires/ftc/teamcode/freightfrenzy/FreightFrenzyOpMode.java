@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.freightfrenzy;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Config
 abstract class FreightFrenzyOpMode extends BaseOpMode {
@@ -17,6 +19,8 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
     protected DcMotorEx intake, pulley, arm;
     protected Servo clamp;
     protected TouchSensor railTopLimit, railBottomLimit, armLimit;
+    protected RevColorSensorV3 intakeSensor;
+
 
     @Override
     protected void composeTelemetry() {
@@ -30,10 +34,12 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         telemetry.addData("pulley power", pulley::getPower);
         telemetry.addData("arm power", arm::getPower);
         telemetry.addData("arm pos", arm::getCurrentPosition);
-        telemetry.addData("arm target", arm::getTargetPosition);
         telemetry.addData("arm busy", arm::isBusy);
         telemetry.addData("arm velocity", arm::getVelocity);
         telemetry.addData("clamp", clamp::getPosition);
+        telemetry.addData("RGB", () -> intakeSensor.red() + ", " + intakeSensor.green() + ", " + intakeSensor.blue());
+        telemetry.addData("Distance", () -> intakeSensor.getDistance(DistanceUnit.MM));
+        telemetry.addData("intaken", this::isFreightIntaken);
     }
 
     @Override
@@ -51,6 +57,10 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
 
     protected boolean armIsIn() {
         return armLimit.isPressed() && railBottomLimit.isPressed();
+    }
+
+    protected boolean isFreightIntaken() {
+        return intakeSensor.getDistance(DistanceUnit.MM) < 65;
     }
 
     protected static class ArmPosition {
