@@ -13,8 +13,6 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
 
     public static double intakeVelocity = 90, carouselPower = 0.5, pulleyIdlePower = -0.1, armPower = 0.5;
 
-    protected boolean armIsOut = false;
-
     protected DcMotor carousel;
     protected DcMotorEx intake, pulley, arm;
     protected Servo clamp;
@@ -51,6 +49,10 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         clamp.setPosition(1);
     }
 
+    protected boolean armIsIn() {
+        return armLimit.isPressed() && railBottomLimit.isPressed();
+    }
+
     protected static class ArmPosition {
         public static final int TOP_GOAL = -1600, MIDDLE_GOAL = -1900, BOTTOM_GOAL = -2200;
     }
@@ -61,7 +63,7 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
     }
 
     protected void pullOutArm(int armPosition) {
-        if (armIsOut) {
+        if (!armIsIn()) {
             return;
         }
         clamp.setPosition(0);
@@ -88,6 +90,13 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
                 arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 armFinished[0] = true;
             }
+            if (gamepad1.dpad_left || gamepad2.dpad_left) {
+                arm.setPower(0);
+                arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                pulley.setPower(0);
+                retractArm();
+                return false;
+            }
             if (System.currentTimeMillis() > endTimeout) {
                 arm.setPower(0);
                 arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -98,11 +107,10 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
                 return !pulleyFinished[0] || !armFinished[0]; // wait until both are done
             }
         });
-        armIsOut = true;
     }
 
     protected final void retractArm() {
-        if (!armIsOut) {
+        if (armIsIn()) {
             return;
         }
         clamp.setPosition(1);
@@ -112,8 +120,12 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         if (arm.getCurrentPosition() < ArmPosition.MIDDLE_GOAL - 100) {
             sleepWhile(500);
         }
-        sleepWhile(500);
-        pulley.setPower(0.5); // retreat downward
+        if (arm.getCurrentPosition() < ArmPosition.TOP_GOAL + 100) {
+            sleepWhile(500);
+        }
+        if (!railBottomLimit.isPressed()) {
+            pulley.setPower(0.5); // retreat downward
+        }
         boolean[] pulleyFinished = {false}, armFinished = {false}; // using array so vars can still be effectively final
         long endTimeout = System.currentTimeMillis() + 9000;
         sleepWhile(() -> {
@@ -126,6 +138,13 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
                 arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 armFinished[0] = true;
             }
+            if (gamepad1.dpad_left || gamepad2.dpad_left) {
+                arm.setPower(0);
+                arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                pulley.setPower(0);
+                retractArm();
+                return false;
+            }
             if (System.currentTimeMillis() > endTimeout) {
                 arm.setPower(0);
                 arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -137,6 +156,5 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
             }
         });
         arm.setPower(0);
-        armIsOut = false;
     }
 }
