@@ -7,7 +7,11 @@ import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
-import org.firstinspires.ftc.robotcore.external.navigation.*;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,7 +46,6 @@ public class NavigationLocalizer implements Localizer {
     private VuforiaTrackables targets = null;
     private WebcamName webcamName = null;
 
-    private boolean targetVisible = false;
     VectorF translationAdded;
     VectorF translation;
 
@@ -57,7 +60,7 @@ public class NavigationLocalizer implements Localizer {
     public Pose2d getPoseEstimate() {
 
         // check all the trackable targets to see which one (if any) is visible.
-        targetVisible = false;
+        boolean targetVisible = false;
         for (VuforiaTrackable trackable : allTrackables) {
             if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
 //                telemetry.addData("Visible Target", trackable.getName());
@@ -84,15 +87,12 @@ public class NavigationLocalizer implements Localizer {
             // express the rotation of the robot in degrees.
             Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
 //            telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+            return new Pose2d(translation.get(0) / mmPerInch + translationAdded.get(0), translation.get(1) / mmPerInch + translation.get(1));
         } else {
 //            telemetry.addData("Visible Target", "none");
+            return null;
         }
 //        telemetry.update();
-        if (translation == null) {
-            return null;
-        } else {
-            return new Pose2d(translation.get(0) / mmPerInch + translationAdded.get(0), translation.get(1) / mmPerInch + translation.get(1));
-        }
     }
 
     @Override
