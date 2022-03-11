@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
  * This is a simple routine to test translational drive capabilities.
  */
 
-//@Disabled
+
 @Autonomous
 @Config
 public class StraightTest extends LinearOpMode {
@@ -54,15 +54,15 @@ public class StraightTest extends LinearOpMode {
             telemetry.addData("rightRear", rightRear.getPower());
             telemetry.update();
         }
-        drive.followTrajectoryAsync(trajectory2);
-        while (!Thread.currentThread().isInterrupted() && drive.isBusy()) {
-            drive.update();
-            telemetry.addData("leftFront", leftFront.getPower());
-            telemetry.addData("leftRear", leftRear.getPower());
-            telemetry.addData("rightFront", rightFront.getPower());
-            telemetry.addData("rightRear", rightRear.getPower());
-            telemetry.update();
-        }
+//        drive.followTrajectoryAsync(trajectory2);
+//        while (!Thread.currentThread().isInterrupted() && drive.isBusy()) {
+//            drive.update();
+//            telemetry.addData("leftFront", leftFront.getPower());
+//            telemetry.addData("leftRear", leftRear.getPower());
+//            telemetry.addData("rightFront", rightFront.getPower());
+//            telemetry.addData("rightRear", rightRear.getPower());
+//            telemetry.update();
+//        }
 
 
         Pose2d poseEstimate = drive.getPoseEstimate();
