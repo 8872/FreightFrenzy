@@ -1,40 +1,50 @@
 package org.firstinspires.ftc.teamcode.freightfrenzy;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-//@Config
+@Config
 abstract class FreightFrenzyOpMode extends BaseOpMode {
 
-    public static double intakeVelocity = 90, carouselPower = -0.5, pulleyIdlePower = -0.1, armPower = 0.5;
-
-    protected boolean armIsOut = false;
+    public static double intakeVelocity = 90, carouselPower = 0.5, pulleyIdlePower = -0.1, armPower = 0.5;
 
     protected DcMotor carousel;
     protected DcMotorEx intake, pulley, arm;
     protected Servo clamp;
     protected TouchSensor railTopLimit, railBottomLimit, armLimit;
+    protected RevColorSensorV3 intakeSensor;
+
 
     @Override
     protected void composeTelemetry() {
         super.composeTelemetry();
-        telemetry.addData("touch sensor", armLimit::isPressed);
+        telemetry.addData("armLimit", armLimit::isPressed);
+        telemetry.addData("railTopLimit", railTopLimit::isPressed);
+        telemetry.addData("railBottomLimit", railBottomLimit::isPressed);
         telemetry.addData("carousel", carousel::getPower);
         telemetry.addData("intake", intake::getPower);
         telemetry.addData("intake velocity", () -> intake.getVelocity(AngleUnit.DEGREES));
-        telemetry.addData("pulley", pulley::getPower);
-        telemetry.addData("arm", arm::getPower);
+        telemetry.addData("pulley power", pulley::getPower);
+        telemetry.addData("arm power", arm::getPower);
         telemetry.addData("arm pos", arm::getCurrentPosition);
+        telemetry.addData("arm busy", arm::isBusy);
         telemetry.addData("arm velocity", arm::getVelocity);
         telemetry.addData("clamp", clamp::getPosition);
+        telemetry.addData("RGB", () -> intakeSensor.red() + ", " + intakeSensor.green() + ", " + intakeSensor.blue());
+        telemetry.addData("Distance", () -> intakeSensor.getDistance(DistanceUnit.MM));
+        telemetry.addData("intaken", this::isFreightIntaken);
     }
 
     @Override
     protected void setUpHardwareDevices() {
+        super.setUpHardwareDevices();
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -43,6 +53,14 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         pulley.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         clamp.setPosition(1);
+    }
+
+    protected boolean armIsIn() {
+        return armLimit.isPressed() && railBottomLimit.isPressed();
+    }
+
+    protected boolean isFreightIntaken() {
+        return intakeSensor.getDistance(DistanceUnit.MM) < 65;
     }
 
     protected static class ArmPosition {
@@ -55,7 +73,7 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
     }
 
     protected void pullOutArm(int armPosition) {
-        if (armIsOut) {
+        if (!armIsIn()) {
             return;
         }
         clamp.setPosition(0);
@@ -82,6 +100,13 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
                 arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 armFinished[0] = true;
             }
+            if (gamepad1.dpad_left || gamepad2.dpad_left) {
+                arm.setPower(0);
+                arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                pulley.setPower(0);
+                retractArm();
+                return false;
+            }
             if (System.currentTimeMillis() > endTimeout) {
                 arm.setPower(0);
                 arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -92,11 +117,10 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
                 return !pulleyFinished[0] || !armFinished[0]; // wait until both are done
             }
         });
-        armIsOut = true;
     }
 
     protected final void retractArm() {
-        if (!armIsOut) {
+        if (armIsIn()) {
             return;
         }
         clamp.setPosition(1);
@@ -106,8 +130,12 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         if (arm.getCurrentPosition() < ArmPosition.MIDDLE_GOAL - 100) {
             sleepWhile(500);
         }
-        sleepWhile(500);
-        pulley.setPower(0.5); // retreat downward
+        if (arm.getCurrentPosition() < ArmPosition.TOP_GOAL + 100) {
+            sleepWhile(500);
+        }
+        if (!railBottomLimit.isPressed()) {
+            pulley.setPower(0.5); // retreat downward
+        }
         boolean[] pulleyFinished = {false}, armFinished = {false}; // using array so vars can still be effectively final
         long endTimeout = System.currentTimeMillis() + 9000;
         sleepWhile(() -> {
@@ -115,10 +143,17 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
                 pulley.setPower(0);
                 pulleyFinished[0] = true;
             }
-            if (!armFinished[0] && !arm.isBusy()) {
+            if (!armFinished[0] && armLimit.isPressed()) {
                 arm.setPower(0);
                 arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 armFinished[0] = true;
+            }
+            if (gamepad1.dpad_left || gamepad2.dpad_left) {
+                arm.setPower(0);
+                arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                pulley.setPower(0);
+                retractArm();
+                return false;
             }
             if (System.currentTimeMillis() > endTimeout) {
                 arm.setPower(0);
@@ -131,6 +166,5 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
             }
         });
         arm.setPower(0);
-        armIsOut = false;
     }
 }

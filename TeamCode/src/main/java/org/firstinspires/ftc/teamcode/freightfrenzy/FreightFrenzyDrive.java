@@ -13,6 +13,8 @@ public class FreightFrenzyDrive extends FreightFrenzyOpMode {
 
     private boolean slowMode = false;
     private double acceleratePower = 0;
+    private final double increment = 0.011;
+    private double carouselPowerTeleop = 0.3;
     private boolean lastLeftStickState1, lastLeftStickState2, lastBumperState1, lastBumperState2;
     private boolean lastDpadState, lastDpadState2;
 
@@ -24,7 +26,7 @@ public class FreightFrenzyDrive extends FreightFrenzyOpMode {
         if (!drive.isBusy() && (gamepad1.x || acceleratePower != 0)) {
             acceleratePower = accelerate(gamepad1.x, acceleratePower);
         } else if (!drive.isBusy()) {
-            mechanumDrive(slowMode, false, false);
+            mechanumDrive(slowMode);
         }
 
         if (gamepad1.left_stick_button && !lastLeftStickState1) {
@@ -33,9 +35,13 @@ public class FreightFrenzyDrive extends FreightFrenzyOpMode {
         lastLeftStickState1 = gamepad1.left_stick_button;
 
         if (gamepad1.y) {
-            carousel.setPower(carouselPower);
+            carousel.setPower(((carouselPowerTeleop < 0.75) ? carouselPowerTeleop += increment : carouselPowerTeleop));
+//            carousel.setPower(carouselPower);
+        } else if (gamepad1.b) {
+            carousel.setPower(-1);
         } else {
             carousel.setPower(0);
+            carouselPowerTeleop = 0.3;
         }
 
 
@@ -59,30 +65,34 @@ public class FreightFrenzyDrive extends FreightFrenzyOpMode {
 
     private void armLoop() {
         // Functionality for gamepad 1
-        if (gamepad1.dpad_up && !lastDpadState && !armIsOut) {
+        if (gamepad1.dpad_up && !lastDpadState && armIsIn()) {
             poolFuture = pool.submit(gamepad1.a ? () -> fullArmSequence(ArmPosition.TOP_GOAL) : () -> pullOutArm(ArmPosition.TOP_GOAL));
-        } else if (gamepad1.dpad_right && !lastDpadState && !armIsOut) {
+        } else if (gamepad1.dpad_right && !lastDpadState && armIsIn()) {
             poolFuture = pool.submit(gamepad1.a ? () -> fullArmSequence(ArmPosition.MIDDLE_GOAL) : () -> pullOutArm(ArmPosition.MIDDLE_GOAL));
-        } else if (gamepad1.dpad_down && !lastDpadState && !armIsOut) {
+        } else if (gamepad1.dpad_down && !lastDpadState && armIsIn()) {
             poolFuture = pool.submit(gamepad1.a ? () -> fullArmSequence(ArmPosition.BOTTOM_GOAL) : () -> pullOutArm(ArmPosition.BOTTOM_GOAL));
-        } else if (gamepad1.dpad_left && !lastDpadState && armIsOut) {
+        } else if (gamepad1.dpad_left && !lastDpadState && !armIsIn()) {
             poolFuture = pool.submit(this::retractArm);
         }
         lastDpadState = gamepad1.dpad_up || gamepad1.dpad_right || gamepad1.dpad_down || gamepad1.dpad_left;
         // Functionality for gamepad 2
-        if (gamepad2.dpad_up && !lastDpadState2 && !armIsOut) {
+        if (gamepad2.dpad_up && !lastDpadState2 && armIsIn()) {
             poolFuture = pool.submit(gamepad2.a ? () -> fullArmSequence(ArmPosition.TOP_GOAL) : () -> pullOutArm(ArmPosition.TOP_GOAL));
-        } else if (gamepad2.dpad_right && !lastDpadState2 && !armIsOut) {
+        } else if (gamepad2.dpad_right && !lastDpadState2 && armIsIn()) {
             poolFuture = pool.submit(gamepad2.a ? () -> fullArmSequence(ArmPosition.MIDDLE_GOAL) : () -> pullOutArm(ArmPosition.MIDDLE_GOAL));
-        } else if (gamepad2.dpad_down && !lastDpadState2 && !armIsOut) {
+        } else if (gamepad2.dpad_down && !lastDpadState2 && armIsIn()) {
             poolFuture = pool.submit(gamepad2.a ? () -> fullArmSequence(ArmPosition.BOTTOM_GOAL) : () -> pullOutArm(ArmPosition.BOTTOM_GOAL));
-        } else if (gamepad2.dpad_left && !lastDpadState2 && armIsOut) {
+        } else if (gamepad2.dpad_left && !lastDpadState2 && !armIsIn()) {
             poolFuture = pool.submit(this::retractArm);
         }
         lastDpadState2 = gamepad2.dpad_up || gamepad2.dpad_right || gamepad2.dpad_down || gamepad2.dpad_left;
 
-        arm.setPower(gamepad2.left_stick_x / 2);
 
+        if (!armLimit.isPressed() || (armLimit.isPressed() && gamepad2.left_stick_x < 0)) {
+            arm.setPower(gamepad2.left_stick_x * armPower);
+        } else {
+            arm.setPower(0);
+        }
 
         if (railTopLimit.isPressed() && gamepad2.left_stick_y <= 0) {
             pulley.setPower(pulleyIdlePower);

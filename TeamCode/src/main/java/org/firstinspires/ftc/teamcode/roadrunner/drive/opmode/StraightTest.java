@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive.opmode;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
  */
 
 
+@Autonomous
+@Config
 public class StraightTest extends LinearOpMode {
     public static double DISTANCE = 48; // in
 
@@ -24,7 +26,7 @@ public class StraightTest extends LinearOpMode {
         DcMotor rightFront = hardwareMap.dcMotor.get("rightFront");
         DcMotor rightRear = hardwareMap.dcMotor.get("rightRear");
 
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+//        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -52,15 +54,15 @@ public class StraightTest extends LinearOpMode {
             telemetry.addData("rightRear", rightRear.getPower());
             telemetry.update();
         }
-        drive.followTrajectoryAsync(trajectory2);
-        while (!Thread.currentThread().isInterrupted() && drive.isBusy()) {
-            drive.update();
-            telemetry.addData("leftFront", leftFront.getPower());
-            telemetry.addData("leftRear", leftRear.getPower());
-            telemetry.addData("rightFront", rightFront.getPower());
-            telemetry.addData("rightRear", rightRear.getPower());
-            telemetry.update();
-        }
+//        drive.followTrajectoryAsync(trajectory2);
+//        while (!Thread.currentThread().isInterrupted() && drive.isBusy()) {
+//            drive.update();
+//            telemetry.addData("leftFront", leftFront.getPower());
+//            telemetry.addData("leftRear", leftRear.getPower());
+//            telemetry.addData("rightFront", rightFront.getPower());
+//            telemetry.addData("rightRear", rightRear.getPower());
+//            telemetry.update();
+//        }
 
 
         Pose2d poseEstimate = drive.getPoseEstimate();

@@ -4,12 +4,10 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
 import java.lang.reflect.Field;
@@ -27,7 +25,7 @@ public abstract class BaseOpMode extends OpMode {
     protected SampleMecanumDrive drive;
     protected final Telemetry dashTelemetry = FtcDashboard.getInstance().getTelemetry();
 
-    protected DcMotor leftRear, rightRear, leftFront, rightFront;
+    protected DcMotorEx leftRear, rightRear, leftFront, rightFront;
     protected BNO055IMU imu;
 
     protected static final ExecutorService pool = Executors.newSingleThreadExecutor();
@@ -44,9 +42,9 @@ public abstract class BaseOpMode extends OpMode {
         });
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        imu.initialize(parameters);
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+//        imu.initialize(parameters);
 
         initHardware();
 
@@ -60,7 +58,16 @@ public abstract class BaseOpMode extends OpMode {
         telemetry.update();
     }
 
-    protected abstract void setUpHardwareDevices();
+    protected void setUpHardwareDevices() {
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
 
     protected void update() {
         telemetry.update();
@@ -79,9 +86,11 @@ public abstract class BaseOpMode extends OpMode {
         telemetry.addData("leftRear", () -> round(leftRear.getPower()));
         telemetry.addData("rightFront", () -> round(rightFront.getPower()));
         telemetry.addData("rightRear", () -> round(rightRear.getPower()));
-        telemetry.addData("x", () -> imu.getPosition().x);
-        telemetry.addData("y", () -> imu.getPosition().y);
-        telemetry.addData("Imu Heading", () -> imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+        telemetry.addData("leftFrontE", leftFront::getCurrentPosition);
+        telemetry.addData("leftRearE", leftRear::getCurrentPosition);
+        telemetry.addData("rightFrontE", rightFront::getCurrentPosition);
+        telemetry.addData("rightRearE", rightRear::getCurrentPosition);
+//        telemetry.addData("Imu Heading", () -> imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
     }
 
     protected void mechanumDrive(boolean slowMode) {
@@ -185,7 +194,15 @@ public abstract class BaseOpMode extends OpMode {
     }
 
     /**
-     * This method takes all fields in this class and subclasses of type
+     * <pre>
+     * This method takes all fields in this class and all subclasses of type HardwareDevice (like DcMotor, Servo) and assigns them to a value from the hardware map the same as the field name.
+     *
+     * For example if you have a field in the class like
+     *
+     * {@code private DcMotor armMotor;}
+     *
+     * It will automatically initialize it to {@code hardwareMap.get(DcMotor.class, "armMotor");}
+     * </pre>
      */
     @SuppressWarnings("rawtypes")
     private void initHardware() {
