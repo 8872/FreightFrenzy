@@ -29,9 +29,11 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         telemetry.addData("railTopLimit", railTopLimit::isPressed);
         telemetry.addData("railBottomLimit", railBottomLimit::isPressed);
         telemetry.addData("carousel", carousel::getPower);
+        telemetry.addData("carouselE", carousel::getCurrentPosition);
         telemetry.addData("intake", intake::getPower);
         telemetry.addData("intake velocity", () -> intake.getVelocity(AngleUnit.DEGREES));
         telemetry.addData("pulley power", pulley::getPower);
+        telemetry.addData("pulleyE", pulley::getCurrentPosition);
         telemetry.addData("arm power", arm::getPower);
         telemetry.addData("arm pos", arm::getCurrentPosition);
         telemetry.addData("arm busy", arm::isBusy);
@@ -39,7 +41,7 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         telemetry.addData("clamp", clamp::getPosition);
         telemetry.addData("RGB", () -> intakeSensor.red() + ", " + intakeSensor.green() + ", " + intakeSensor.blue());
         telemetry.addData("Distance", () -> intakeSensor.getDistance(DistanceUnit.MM));
-        telemetry.addData("intaken", this::isFreightIntaken);
+        telemetry.addData("in   c vc     taken", this::isFreightIntaken);
     }
 
     @Override
@@ -51,7 +53,7 @@ abstract class FreightFrenzyOpMode extends BaseOpMode {
         intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pulley.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pulley.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        carousel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         clamp.setPosition(1);
     }
 
