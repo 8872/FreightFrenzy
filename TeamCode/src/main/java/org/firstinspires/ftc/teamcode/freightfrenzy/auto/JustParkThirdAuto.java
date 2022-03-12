@@ -3,10 +3,9 @@ package org.firstinspires.ftc.teamcode.freightfrenzy.auto;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.freightfrenzy.AutonomousOpMode;
 
-public abstract class JustParkThirdAuto extends LinearOpMode {
+public abstract class JustParkThirdAuto extends AutonomousOpMode {
 
     private final boolean isRed;
 
@@ -16,20 +15,16 @@ public abstract class JustParkThirdAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPoseR = new Pose2d(-33, -62, Math.toRadians(90));
         Pose2d startPoseB = new Pose2d(-33, 62, Math.toRadians(-90));
+        Pose2d startPose = isRed ? startPoseR : startPoseB;
+        drive.setPoseEstimate(startPose);
 
-        Trajectory traj = drive.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(isRed ? startPoseR : startPoseB).build();
-        drive.followTrajectory(traj);
-        waitForStart();
-
+        Trajectory traj;
         if (isRed) { // park
-            traj = drive.trajectoryBuilder(traj.end()).lineTo(new Vector2d(-63, -37)).build();
+            traj = drive.trajectoryBuilder(startPose).lineTo(new Vector2d(-63, -37)).build();
         } else {
-            traj = drive.trajectoryBuilder(traj.end()).lineTo(new Vector2d(-63, 37)).build();
+            traj = drive.trajectoryBuilder(startPose).lineTo(new Vector2d(-63, 37)).build();
         }
         drive.followTrajectory(traj);
 

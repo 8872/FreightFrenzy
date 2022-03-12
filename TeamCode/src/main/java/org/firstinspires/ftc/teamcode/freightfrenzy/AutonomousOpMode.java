@@ -8,7 +8,9 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-abstract class AutonomousOpMode extends FreightFrenzyOpMode {
+import java.util.Objects;
+
+public abstract class AutonomousOpMode extends FreightFrenzyOpMode {
 
     {msStuckDetectInit = 10_000;}
 
@@ -34,29 +36,28 @@ abstract class AutonomousOpMode extends FreightFrenzyOpMode {
 
     protected abstract void runOpMode() throws InterruptedException;
 
-    protected TSEPosition tsePosition;
 
+    /* TSE detection stuff */
+
+    protected TSEPosition tsePosition;
     private OpenCvCamera camera;
     private AprilTagDetectionPipeline aprilTagDetectionPipeline;
-
     private static final double FEET_PER_METER = 3.28084;
     private static final double INCH_PER_FEET = 12.0;
-
     // Lens intrinsics
     // UNITS ARE PIXELS
     // NOTE: this calibration is for the C920 webcam at 800x448.
     private static final double fx = 578.272, fy = 578.272, cx = 402.145, cy = 221.506;
-
     // UNITS ARE METERS
     private static final double tagsize = 0.166; // needs to be changed
-
     private static final int ID_TAG_OF_INTEREST = 18; // Tag ID 18 from the 36h11 family
 
     @Override
     protected void setUpHardwareDevices() {
         super.setUpHardwareDevices();
         initCV();
-        telemetry.addData("TSE Position", () -> tsePosition);
+        // account for null-values with Objects.toString()
+        telemetry.addData("TSE Position", () -> Objects.toString(tsePosition));
     }
 
     private void initCV() {
@@ -68,7 +69,7 @@ abstract class AutonomousOpMode extends FreightFrenzyOpMode {
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                camera.startStreaming(1920, 1080, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(800, 448, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -104,6 +105,17 @@ abstract class AutonomousOpMode extends FreightFrenzyOpMode {
                 return RIGHT;
             }
             return null;
+        }
+
+        public int armPosition() {
+            switch (this) {
+                case LEFT:
+                    return ArmPosition.BOTTOM_GOAL;
+                case MIDDLE:
+                    return ArmPosition.MIDDLE_GOAL;
+                default:
+                    return ArmPosition.TOP_GOAL;
+            }
         }
     }
 
