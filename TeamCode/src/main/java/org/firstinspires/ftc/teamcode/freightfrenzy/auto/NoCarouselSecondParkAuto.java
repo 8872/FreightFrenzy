@@ -22,7 +22,7 @@ public abstract class NoCarouselSecondParkAuto extends AutonomousOpMode {
 
         Trajectory traj;
         if (isRed) { // go to shipping hub
-            traj = drive.trajectoryBuilder(startPose).lineToLinearHeading(new Pose2d(9, -28, Math.toRadians(0))).build();
+            traj = drive.trajectoryBuilder(startPose).lineTo(new Pose2d(9, -28, Math.toRadians(0)).vec()).build();
         } else {
             traj = drive.trajectoryBuilder(startPose).lineToLinearHeading(new Pose2d(9, 28, Math.toRadians(0))).build();
         }

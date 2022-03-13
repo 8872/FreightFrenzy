@@ -22,17 +22,17 @@ public abstract class JustParkSecondAuto extends AutonomousOpMode {
 
         Trajectory traj;
         if (isRed) { // forward and turn
-            traj = drive.trajectoryBuilder(startPose).lineToLinearHeading(new Pose2d(-33, -58, Math.toRadians(0))).build();
+            traj = drive.trajectoryBuilder(startPose).lineTo(new Pose2d(-33, -58, Math.toRadians(0)).vec()).build();
         } else {
-            traj = drive.trajectoryBuilder(startPose).lineToLinearHeading(new Pose2d(-33, 58, Math.toRadians(0))).build();
+            traj = drive.trajectoryBuilder(startPose).lineTo(new Pose2d(-33, 58, Math.toRadians(0)).vec()).build();
         }
-
         drive.followTrajectory(traj);
+        drive.turn(90);
 
         if (isRed) { // park
-            traj = drive.trajectoryBuilder(traj.end()).lineTo(new Vector2d(9, -62)).build();
+            traj = drive.trajectoryBuilder(drive.getPoseEstimate()).lineTo(new Vector2d(9, -62)).build();
         } else {
-            traj = drive.trajectoryBuilder(traj.end()).lineTo(new Vector2d(9, 62)).build();
+            traj = drive.trajectoryBuilder(drive.getPoseEstimate()).lineTo(new Vector2d(9, 62)).build();
         }
         drive.followTrajectory(traj);
         if (isRed) { // ram against wall
