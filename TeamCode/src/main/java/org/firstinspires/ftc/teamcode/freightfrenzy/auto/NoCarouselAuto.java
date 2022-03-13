@@ -40,15 +40,15 @@ public abstract class NoCarouselAuto extends AutonomousOpMode {
         }
 
         if (isRed) { // ram against wall
-            traj = drive.trajectoryBuilder(traj.end()).lineTo(new Vector2d(9, -62)).build();
+            traj = drive.trajectoryBuilder(traj.end()).lineTo(new Vector2d(9, -70)).build();
         } else {
-            traj = drive.trajectoryBuilder(traj.end()).lineTo(new Vector2d(9, 62)).build();
+            traj = drive.trajectoryBuilder(traj.end()).lineTo(new Vector2d(9, 70)).build();
         }
         drive.followTrajectory(traj);
         if (isRed) { // park
-            traj = drive.trajectoryBuilder(traj.end()).lineTo(new Vector2d(38, -62)).build();
+            traj = drive.trajectoryBuilder(traj.end()).lineTo(new Vector2d(38, -70)).build();
         } else {
-            traj = drive.trajectoryBuilder(traj.end()).lineTo(new Vector2d(38, 62)).build();
+            traj = drive.trajectoryBuilder(traj.end()).lineTo(new Vector2d(38, 70)).build();
         }
         drive.followTrajectory(traj);
 

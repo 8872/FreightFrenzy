@@ -39,7 +39,7 @@ public abstract class AutonomousOpMode extends FreightFrenzyOpMode {
 
     /* TSE detection stuff */
 
-    protected TSEPosition tsePosition;
+    protected TSEPosition tsePosition = TSEPosition.RIGHT;
     private OpenCvCamera camera;
     private AprilTagDetectionPipeline aprilTagDetectionPipeline;
     private static final double FEET_PER_METER = 3.28084;

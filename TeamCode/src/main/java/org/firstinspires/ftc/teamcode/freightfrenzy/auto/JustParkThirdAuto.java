@@ -22,9 +22,9 @@ public abstract class JustParkThirdAuto extends AutonomousOpMode {
 
         Trajectory traj;
         if (isRed) { // park
-            traj = drive.trajectoryBuilder(startPose).lineTo(new Vector2d(-63, -37)).build();
+            traj = drive.trajectoryBuilder(startPose).lineTo(new Vector2d(-63, -35)).build();
         } else {
-            traj = drive.trajectoryBuilder(startPose).lineTo(new Vector2d(-63, 37)).build();
+            traj = drive.trajectoryBuilder(startPose).lineTo(new Vector2d(-63, 35)).build();
         }
         drive.followTrajectory(traj);
 
